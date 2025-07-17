@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - SkillSwap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    {% include 'partials/header.html' %}
+    
+    <main>
+        <section class="profile">
+            <div class="container">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        {% if user.ProfilePicture %}
+                            <img src="{{ user.ProfilePicture }}" alt="{{ user.Username }}">
+                        {% else %}
+                            <div class="avatar-placeholder">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="profile-info">
+                        <h1>{{ user.FirstName }} {{ user.LastName }}</h1>
+                        <p class="username">@{{ user.Username }}</p>
+                        
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <i class="fas fa-star"></i>
+                                <span>{{ user.ReputationScore }} Reputation</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ user.Location or 'No location set' }}</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Joined {{ user.JoinDate.strftime('%b %Y') }}</span>
+                            </div>
+                        </div>
+                        
+                        {% if session['user_id'] == user.UserID %}
+                            <div class="profile-actions">
+                                <a href="{{ url_for('edit_profile') }}" class="btn btn-primary">
+                                    <i class="fas fa-edit"></i> Edit Profile
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if user.Bio %}
+                    <div class="profile-bio">
+                        <h2>About</h2>
+                        <p>{{ user.Bio }}</p>
+                    </div>
+                {% endif %}
+                
+                <div class="profile-skills">
+                    <div class="section-header">
+                        <h2>Skills</h2>
+                        {% if session['user_id'] == user.UserID %}
+                            <a href="{{ url_for('add_skill') }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-plus"></i> Add Skill
+                            </a>
+                        {% endif %}
+                    </div>
+                    
+                    {% if skills %}
+                        <div class="skills-grid">
+                            {% for skill in skills %}
+                                <div class="skill-card">
+                                    <div class="skill-header">
+                                        <h3>{{ skill.SkillName }}</h3>
+                                        <span class="badge badge-{{ skill.ProficiencyLevel.lower() }}">{{ skill.ProficiencyLevel }}</span>
+                                    </div>
+                                    <div class="skill-details">
+                                        <p>Category: {{ skill.CategoryName }}</p>
+                                        <p>Experience: {{ skill.YearsExperience }} years</p>
+                                        {% if skill.IsVerified %}
+                                            <p class="verified"><i class="fas fa-check-circle"></i> Verified</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="empty-state">No skills added yet.</p>
+                    {% endif %}
+                </div>
+                
+                <div class="profile-reviews">
+                    <h2>Reviews</h2>
+                    
+                    {% if reviews %}
+                        <div class="reviews-list">
+                            {% for review in reviews %}
+                                <div class="review-card">
+                                    <div class="review-header">
+                                        <div class="reviewer-info">
+                                            <h3>{{ review.ReviewerUsername }}</h3>
+                                            <p class="review-date">{{ review.CreatedDate.strftime('%b %d, %Y') }}</p>
+                                        </div>
+                                        <div class="review-rating">
+                                            {% for i in range(5) %}
+                                                {% if i < review.Rating %}
+                                                    <i class="fas fa-star"></i>
+                                                {% else %}
+                                                    <i class="far fa-star"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="review-content">
+                                        <p>{{ review.Comment }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="empty-state">No reviews yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    {% include 'partials/footer.html' %}
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

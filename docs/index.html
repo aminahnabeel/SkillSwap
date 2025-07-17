@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Peer-to-Peer Skill Exchange Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .features {
+            background: white;
+            padding: 4rem 0;
+        }
+
+        .features h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: #333;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .tech-stack {
+            background: #f8f9fa;
+            padding: 4rem 0;
+        }
+
+        .tech-stack h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: #333;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .tech-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #667eea;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .getting-started {
+            background: white;
+            padding: 4rem 0;
+        }
+
+        .getting-started h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: #333;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+        }
+
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .social-links {
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">SkillSwap</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#tech">Technology</a></li>
+                <li><a href="#getting-started">Getting Started</a></li>
+                <li><a href="https://github.com/aminahnabeel/SkillSwap" target="_blank">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>SkillSwap</h1>
+            <p>Connect, Learn, and Grow with Peer-to-Peer Skill Exchange</p>
+            <a href="https://github.com/aminahnabeel/SkillSwap" class="btn">View on GitHub</a>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👤</div>
+                    <h3>User Authentication</h3>
+                    <p>Secure login and registration system with profile management</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Skill Management</h3>
+                    <p>Add, edit, and showcase your skills with proficiency levels</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Smart Matching</h3>
+                    <p>Automatic matching between skill providers and requesters</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Real-time Messaging</h3>
+                    <p>Chat with other users using WebSocket connections</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <h3>Transaction Management</h3>
+                    <p>Schedule and track skill exchange sessions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⭐</div>
+                    <h3>Review System</h3>
+                    <p>Rate and review completed skill exchanges</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tech" class="tech-stack">
+        <div class="container">
+            <h2>Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item">Flask</div>
+                <div class="tech-item">Flask-SocketIO</div>
+                <div class="tech-item">SQL Server</div>
+                <div class="tech-item">HTML/CSS</div>
+                <div class="tech-item">JavaScript</div>
+                <div class="tech-item">WebSockets</div>
+                <div class="tech-item">pyodbc</div>
+                <div class="tech-item">Session Auth</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="getting-started" class="getting-started">
+        <div class="container">
+            <h2>Getting Started</h2>
+            <div class="code-block">
+                <div># Clone the repository</div>
+                <div>git clone https://github.com/aminahnabeel/SkillSwap.git</div>
+                <div>cd SkillSwap</div>
+                <div></div>
+                <div># Install dependencies</div>
+                <div>pip install -r requirements.txt</div>
+                <div></div>
+                <div># Run the application</div>
+                <div>python app.py</div>
+            </div>
+            <p style="text-align: center; margin-top: 2rem;">
+                <a href="https://github.com/aminahnabeel/SkillSwap#installation" class="btn">View Full Documentation</a>
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 SkillSwap. Open source project.</p>
+            <div class="social-links">
+                <a href="https://github.com/aminahnabeel/SkillSwap" target="_blank">GitHub</a>
+                <a href="https://github.com/aminahnabeel/SkillSwap/issues" target="_blank">Issues</a>
+                <a href="https://github.com/aminahnabeel/SkillSwap/blob/main/README.md" target="_blank">Documentation</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

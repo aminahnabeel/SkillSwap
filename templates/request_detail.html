@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ request.SkillName }} Request - SkillSwap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/request-detail.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    {% include 'partials/header.html' %}
+    
+    <main>
+        <section class="request-detail">
+            <div class="container">
+                <div class="page-header">
+                    <a href="{{ url_for('browse_requests') }}" class="back-link">
+                        <i class="fas fa-arrow-left"></i> Back to Requests
+                    </a>
+                    <h1>{{ request.SkillName }} Request</h1>
+                    {% if request.IsUrgent %}
+                        <span class="badge badge-urgent"><i class="fas fa-exclamation-circle"></i> Urgent</span>
+                    {% endif %}
+                </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="request-content">
+                    <div class="request-info">
+                        <div class="info-card">
+                            <h2><i class="fas fa-info-circle"></i> Request Details</h2>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-graduation-cap"></i> Skill:</span>
+                                <span class="detail-value">{{ request.SkillName }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-folder-open"></i> Category:</span>
+                                <span class="detail-value">{{ request.CategoryName }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-chart-line"></i> Desired Level:</span>
+                                <span class="detail-value">{{ request.DesiredProficiencyLevel }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-calendar-plus"></i> Created:</span>
+                                <span class="detail-value">{{ request.CreatedDate.strftime('%b %d, %Y') }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fas fa-calendar-times"></i> Expires:</span>
+                                <span class="detail-value">{{ request.ExpiryDate.strftime('%b %d, %Y') }}</span>
+                            </div>
+                            
+                            <div class="request-description">
+                                <h3><i class="fas fa-align-left"></i> Description</h3>
+                                <p>{{ request.Description }}</p>
+                            </div>
+                            
+                            {% if 'user_id' in session and session['user_id'] != request.UserID %}
+                                <div class="request-actions">
+                                    {% if can_offer_help %}
+                                        <form action="{{ url_for('offer_help', request_id=request.RequestID) }}" method="post">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-hands-helping"></i> Offer Help
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <p class="help-note">
+                                            <i class="fas fa-info-circle"></i> You need to add this skill to your profile before you can offer help.
+                                        </p>
+                                        <a href="{{ url_for('add_skill') }}?skill_id={{ request.SkillID }}" class="btn btn-secondary">
+                                            <i class="fas fa-plus-circle"></i> Add Skill to Profile
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="requestor-info">
+                        <div class="user-card">
+                            <h2><i class="fas fa-user"></i> Requestor</h2>
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-details">
+                                <h3>{{ request.FirstName }} {{ request.LastName }}</h3>
+                                <p class="username">@{{ request.Username }}</p>
+                                {% if request.Location %}
+                                    <p><i class="fas fa-map-marker-alt"></i> {{ request.Location }}</p>
+                                {% endif %}
+                                <p><i class="fas fa-star"></i> {{ request.ReputationScore }} Reputation</p>
+                            </div>
+                            <div class="user-actions">
+                                <a href="{{ url_for('profile', user_id=request.UserID) }}" class="btn btn-secondary">
+                                    <i class="fas fa-user-circle"></i> View Profile
+                                </a>
+                                {% if 'user_id' in session and session['user_id'] != request.UserID %}
+                                    <a href="{{ url_for('conversation', other_user_id=request.UserID) }}" class="btn btn-primary">
+                                        <i class="fas fa-comment"></i> Message
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    {% include 'partials/footer.html' %}
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Add animation to cards
+        document.addEventListener('DOMContentLoaded', function() {
+            // Calculate days remaining until expiry
+            const expiryDate = new Date("{{ request.ExpiryDate }}");
+            const today = new Date();
+            const daysRemaining = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+            
+            // Add expiry warning if less than 3 days
+            if (daysRemaining <= 3 && daysRemaining > 0) {
+                const expiryElement = document.querySelector('.detail-item:nth-child(5) .detail-value');
+                expiryElement.innerHTML += ` <span class="badge badge-urgent" style="font-size: 0.75rem; margin-left: 0.5rem;">Expires in ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}</span>`;
+            }
+        });
+    </script>
+</body>
+</html>

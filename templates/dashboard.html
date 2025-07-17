@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SkillSwap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    {% include 'partials/header.html' %}
+    
+    <main>
+        <section class="dashboard">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h1>Welcome, {{ user.FirstName }}!</h1>
+                    <div class="dashboard-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Reputation</h3>
+                                <p>{{ user.ReputationScore or 0 }}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Skills</h3>
+                                <p>{{ skills|length }}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Active Matches</h3>
+                                <p>{{ (matches_as_requestor|length) + (matches_as_provider|length) + (accepted_matches|length) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="dashboard-actions">
+                    <a href="{{ url_for('add_skill') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Skill
+                    </a>
+                    <a href="{{ url_for('create_request') }}" class="btn btn-secondary">
+                        <i class="fas fa-question-circle"></i> Request Help
+                    </a>
+                    <a href="{{ url_for('browse_requests') }}" class="btn btn-secondary">
+                        <i class="fas fa-search"></i> Browse Requests
+                    </a>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2>My Skills</h2>
+                            <a href="{{ url_for('profile') }}" class="btn btn-sm">View All</a>
+                        </div>
+                        <div class="card-content">
+                            {% if skills %}
+                                <ul class="skill-list">
+                                    {% for skill in skills[:5] %}
+                                        <li class="skill-item">
+                                            <div class="skill-info">
+                                                <h3>{{ skill.SkillName }}</h3>
+                                                <p>{{ skill.CategoryName }} • {{ skill.ProficiencyLevel }}</p>
+                                            </div>
+                                            <div class="skill-years">
+                                                <span>{{ skill.YearsExperience }} years</span>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                {% if skills|length > 5 %}
+                                    <p class="view-more">
+                                        <a href="{{ url_for('profile') }}">View {{ skills|length - 5 }} more skills</a>
+                                    </p>
+                                {% endif %}
+                            {% else %}
+                                <p class="empty-state">You haven't added any skills yet.</p>
+                                <a href="{{ url_for('add_skill') }}" class="btn btn-primary btn-sm">Add Your First Skill</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2>My Requests</h2>
+                            <a href="{{ url_for('create_request') }}" class="btn btn-sm">New Request</a>
+                        </div>
+                        <div class="card-content">
+                            {% if requests %}
+                                <ul class="request-list">
+                                    {% for request in requests %}
+                                        <li class="request-item">
+                                            <div class="request-info">
+                                                <h3>{{ request.SkillName }}</h3>
+                                                <p>{{ request.DesiredProficiencyLevel }} • 
+                                                   {% if request.IsUrgent %}
+                                                       <span class="badge badge-urgent">Urgent</span>
+                                                   {% endif %}
+                                                </p>
+                                                <p class="request-description">{{ request.Description[:100] }}{% if request.Description|length > 100 %}...{% endif %}</p>
+                                            </div>
+                                            <div class="request-date">
+                                                <span>Expires: {{ request.ExpiryDate.strftime('%b %d, %Y') }}</span>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="empty-state">You don't have any open requests.</p>
+                                <a href="{{ url_for('create_request') }}" class="btn btn-primary btn-sm">Create Your First Request</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- FIXED: Pending Matches - Separated by role with correct Accept button logic -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2>Pending Matches</h2>
+                        </div>
+                        <div class="card-content">
+                            {% set has_pending_matches = matches_as_requestor or matches_as_provider %}
+                            {% if has_pending_matches %}
+                                <ul class="match-list">
+                                    <!-- Matches where I am the REQUESTOR (I can accept offers) -->
+                                    {% for match in matches_as_requestor %}
+                                        <li class="match-item requestor-match">
+                                            <div class="match-info">
+                                                <h3>{{ match.SkillName }}</h3>
+                                                <p><strong>Provider:</strong> {{ match.ProviderUsername }}</p>
+                                                <p><strong>Your Role:</strong> <span class="badge badge-requestor">Requestor</span></p>
+                                                <p><strong>Status:</strong> <span class="badge badge-{{ match.Status|lower }}">{{ match.Status }}</span></p>
+                                            </div>
+                                            <div class="match-actions">
+                                                {% if match.Status == 'Pending' %}
+                                                    <form action="{{ url_for('accept_match', match_id=match.MatchID) }}" method="post" style="display: inline;">
+                                                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Accept this match?')">
+                                                            <i class="fas fa-check"></i> Accept Offer
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                    
+                                    <!-- Matches where I am the PROVIDER (waiting for acceptance) -->
+                                    {% for match in matches_as_provider %}
+                                        <li class="match-item provider-match">
+                                            <div class="match-info">
+                                                <h3>{{ match.SkillName }}</h3>
+                                                <p><strong>Requestor:</strong> {{ match.RequestorUsername }}</p>
+                                                <p><strong>Your Role:</strong> <span class="badge badge-provider">Provider</span></p>
+                                                <p><strong>Status:</strong> <span class="badge badge-{{ match.Status|lower }}">{{ match.Status }}</span></p>
+                                            </div>
+                                            <div class="match-actions">
+                                                {% if match.Status == 'Pending' %}
+                                                    <span class="status-text">
+                                                        <i class="fas fa-clock"></i> Waiting for acceptance
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="empty-state">You don't have any pending matches.</p>
+                                <a href="{{ url_for('browse_requests') }}" class="btn btn-primary btn-sm">Browse Requests</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- NEW: Accepted Matches Section -->
+                    {% if accepted_matches %}
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2>Accepted Matches</h2>
+                        </div>
+                        <div class="card-content">
+                            <ul class="match-list">
+                                {% for match in accepted_matches %}
+                                    <li class="match-item accepted-match">
+                                        <div class="match-info">
+                                            <h3>{{ match.SkillName }}</h3>
+                                            <p><strong>Partner:</strong> {{ match.OtherUsername }}</p>
+                                            <p><strong>Your Role:</strong> <span class="badge badge-{{ match.MyRole|lower }}">{{ match.MyRole }}</span></p>
+                                            <p><strong>Status:</strong> <span class="badge badge-accepted">Accepted</span></p>
+                                        </div>
+                                        <div class="match-actions">
+                                            <a href="{{ url_for('schedule_transaction', match_id=match.MatchID) }}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-calendar"></i> Schedule Session
+                                            </a>
+                                            <a href="{{ url_for('conversation', other_user_id=match.OtherUserID) }}" class="btn btn-sm btn-secondary">
+                                                <i class="fas fa-comments"></i> Message
+                                            </a>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2>Recent Notifications</h2>
+                            <a href="{{ url_for('notifications') }}" class="btn btn-sm">View All</a>
+                        </div>
+                        <div class="card-content">
+                            {% if notifications %}
+                                <ul class="notification-list">
+                                    {% for notification in notifications[:5] %}
+                                        <li class="notification-item {% if not notification.IsRead %}unread{% endif %}">
+                                            <div class="notification-icon">
+                                                {% if notification.Type == 'NewReview' %}
+                                                    <i class="fas fa-star"></i>
+                                                {% elif notification.Type == 'MatchAccepted' %}
+                                                    <i class="fas fa-handshake"></i>
+                                                {% elif notification.Type == 'NewMatch' %}
+                                                    <i class="fas fa-user-plus"></i>
+                                                {% elif notification.Type == 'NewMessage' %}
+                                                    <i class="fas fa-envelope"></i>
+                                                {% else %}
+                                                    <i class="fas fa-bell"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div class="notification-content">
+                                                <p>{{ notification.Message }}</p>
+                                                <span class="notification-time">
+                                                    {% if notification.CreatedDate %}
+                                                        {{ notification.CreatedDate.strftime('%b %d, %Y %H:%M') }}
+                                                    {% else %}
+                                                        Recently
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                {% if notifications|length > 5 %}
+                                    <p class="view-more">
+                                        <a href="{{ url_for('notifications') }}">View {{ notifications|length - 5 }} more notifications</a>
+                                    </p>
+                                {% endif %}
+                            {% else %}
+                                <p class="empty-state">You don't have any notifications.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    {% include 'partials/footer.html' %}
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <style>
+    /* Additional styles for the new dashboard layout */
+    .match-item.requestor-match {
+        border-left: 4px solid #28a745;
+    }
+    
+    .match-item.provider-match {
+        border-left: 4px solid #007bff;
+    }
+    
+    .match-item.accepted-match {
+        border-left: 4px solid #ffc107;
+    }
+    
+    .badge-requestor {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .badge-provider {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .badge-accepted {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .status-text {
+        color: #6c757d;
+        font-style: italic;
+    }
+    
+    .notification-item.unread {
+        background-color: #f8f9fa;
+        border-left: 3px solid #007bff;
+    }
+    
+    .view-more {
+        text-align: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .request-description {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+    
+    .match-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .match-actions .btn {
+        white-space: nowrap;
+    }
+    </style>
+</body>
+</html>

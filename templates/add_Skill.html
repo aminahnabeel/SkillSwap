@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Skill - SkillSwap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/add-skill.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    {% include 'partials/header.html' %}
+    
+    <main>
+        <section class="add-skill">
+            <div class="container">
+                <div class="page-header">
+                    <h1>Add Skill to Your Profile</h1>
+                </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="skill-form-container">
+                    <form action="{{ url_for('add_skill') }}" method="post" class="skill-form">
+                        <div class="form-group">
+                            <label for="skill_id">Select Skill</label>
+                            <select id="skill_id" name="skill_id" required>
+                                <option value="">-- Select a Skill --</option>
+                                {% for skill in skills %}
+                                    <option value="{{ skill.SkillID }}" {% if request.args.get('skill_id')|int == skill.SkillID %}selected{% endif %}>
+                                        {{ skill.SkillName }} ({{ skill.CategoryName }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="proficiency">Proficiency Level</label>
+                            <select id="proficiency" name="proficiency" required>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                                <option value="Expert">Expert</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="years_experience">Years of Experience</label>
+                            <input type="number" id="years_experience" name="years_experience" min="0" max="50" value="1" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Add Skill</button>
+                        <a href="{{ url_for('profile') }}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    {% include 'partials/footer.html' %}
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

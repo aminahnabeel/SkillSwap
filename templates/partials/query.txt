@@ -1,0 +1,274 @@
+CREATE TABLE Categories (
+    CategoryID INT IDENTITY(1,1) PRIMARY KEY,
+    CategoryName NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500) NULL,
+    IsActive BIT DEFAULT 1
+);
+
+-- Create Skills table
+CREATE TABLE Skills (
+    SkillID INT IDENTITY(1,1) PRIMARY KEY,
+    SkillName NVARCHAR(100) NOT NULL,
+    CategoryID INT FOREIGN KEY REFERENCES Categories(CategoryID),
+    Description NVARCHAR(500) NULL,
+    Difficulty NVARCHAR(20) CHECK (Difficulty IN ('Beginner', 'Intermediate', 'Advanced')),
+    IsActive BIT DEFAULT 1
+);
+
+-- Insert some sample categories
+INSERT INTO Categories (CategoryName, Description)
+VALUES 
+('Technology', 'Computer, programming, and digital skills'),
+('Arts & Crafts', 'Creative and artistic skills'),
+('Languages', 'Language learning and translation'),
+('Music', 'Musical instruments and vocal skills'),
+('Fitness', 'Exercise, sports, and physical activities'),
+('Cooking', 'Culinary arts and food preparation'),
+('Academic', 'Educational and scholarly subjects'),
+('Professional', 'Business and career-related skills');
+
+-- Insert some sample skills
+INSERT INTO Skills (SkillName, CategoryID, Description, Difficulty)
+VALUES 
+('Python Programming', 1, 'Learn to code in Python programming language', 'Intermediate'),
+('Web Development', 1, 'HTML, CSS, JavaScript and web frameworks', 'Intermediate'),
+('Digital Photography', 2, 'Taking and editing digital photos', 'Beginner'),
+('Spanish Language', 3, 'Learn to speak, read and write in Spanish', 'Beginner'),
+('Guitar', 4, 'Acoustic or electric guitar playing', 'Intermediate'),
+('Yoga', 5, 'Yoga poses, breathing, and meditation', 'Beginner'),
+('Baking', 6, 'Bread, pastries, and desserts', 'Intermediate'),
+('Mathematics', 7, 'Algebra, calculus, and statistics', 'Advanced'),
+('Public Speaking', 8, 'Effective communication and presentation skills', 'Intermediate');
+
+----------------------------------------------------------------------------------------------
+
+-- Create Users table
+CREATE TABLE Users (
+    UserID INT IDENTITY(1,1) PRIMARY KEY,
+    Username NVARCHAR(50) NOT NULL UNIQUE,
+    Email NVARCHAR(100) NOT NULL UNIQUE,
+    PasswordHash NVARCHAR(255) NOT NULL,
+    FirstName NVARCHAR(50) NULL,
+    LastName NVARCHAR(50) NULL,
+    Bio NVARCHAR(1000) NULL,
+    Location NVARCHAR(100) NULL,
+    ProfilePicture NVARCHAR(255) NULL,
+    ReputationScore FLOAT DEFAULT 0,
+    JoinDate DATETIME NOT NULL,
+    LastActive DATETIME NOT NULL,
+    IsActive BIT DEFAULT 1
+);
+
+-- Create UserSkills table
+CREATE TABLE UserSkills (
+    UserSkillID INT IDENTITY(1,1) PRIMARY KEY,
+    UserID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+    SkillID INT NOT NULL FOREIGN KEY REFERENCES Skills(SkillID),
+    ProficiencyLevel NVARCHAR(20) CHECK (ProficiencyLevel IN ('Beginner', 'Intermediate', 'Advanced', 'Expert')),
+    YearsExperience INT NULL,
+    CreatedDate DATETIME NOT NULL,
+    CONSTRAINT UQ_UserSkill UNIQUE (UserID, SkillID)
+);
+
+-- Create SkillRequests table
+CREATE TABLE SkillRequests (
+    RequestID INT IDENTITY(1,1) PRIMARY KEY,
+    UserID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+    SkillID INT NOT NULL FOREIGN KEY REFERENCES Skills(SkillID),
+    DesiredProficiencyLevel NVARCHAR(20) CHECK (DesiredProficiencyLevel IN ('Beginner', 'Intermediate', 'Advanced', 'Expert')),
+    Description NVARCHAR(1000) NULL,
+    IsUrgent BIT DEFAULT 0,
+    CreatedDate DATETIME NOT NULL,
+    ExpiryDate DATETIME NOT NULL,
+    Status NVARCHAR(20) NOT NULL CHECK (Status IN ('Open', 'Matched', 'Closed', 'Expired'))
+);
+
+-- Create Matches table
+CREATE TABLE Matches (
+    MatchID INT IDENTITY(1,1) PRIMARY KEY,
+    RequestID INT NOT NULL FOREIGN KEY REFERENCES SkillRequests(RequestID),
+    RequestorUserID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+    ProviderUserID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+    CreatedDate DATETIME NOT NULL,
+    Status NVARCHAR(20) NOT NULL CHECK (Status IN ('Pending', 'Accepted', 'Rejected', 'Completed', 'Cancelled')),
+    CONSTRAINT UQ_Match UNIQUE (RequestID, ProviderUserID)
+);
+
+-- Create Transactions table
+CREATE TABLE Transactions (
+    TransactionID INT IDENTITY(1,1) PRIMARY KEY,
+    MatchID INT NOT NULL FOREIGN KEY REFERENCES Matches(MatchID),
+    StartDate DATETIME NOT NULL,
+    EndDate DATETIME NULL,
+    Notes NVARCHAR(1000) NULL,
+    Status NVARCHAR(20) NOT NULL CHECK (Status IN ('Scheduled', 'In Progress', 'Completed', 'Cancelled')),
+    CreatedDate DATETIME NOT NULL,
+    CompletedDate DATETIME NULL
+);
+
+-- Create Reviews table
+CREATE TABLE Reviews (
+    ReviewID INT IDENTITY(1,1) PRIMARY KEY,
+    TransactionID INT NOT NULL FOREIGN KEY REFERENCES Transactions(TransactionID),
+    ReviewerUserID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+    ReceiverUserID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+    Rating INT NOT NULL CHECK (Rating BETWEEN 1 AND 5),
+    Comment NVARCHAR(1000) NULL,
+    CreatedDate DATETIME NOT NULL,
+    CONSTRAINT UQ_Review UNIQUE (TransactionID, ReviewerUserID, ReceiverUserID)
+);
+
+-- Create Messages table
+CREATE TABLE Messages (
+    MessageID INT IDENTITY(1,1) PRIMARY KEY,
+    SenderUserID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+    ReceiverUserID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+    MessageContent NVARCHAR(MAX) NOT NULL,
+    SentDate DATETIME NOT NULL,
+    IsRead BIT DEFAULT 0,
+    ReadDate DATETIME NULL
+);
+
+-- Create Notifications table
+CREATE TABLE Notifications (
+    NotificationID INT IDENTITY(1,1) PRIMARY KEY,
+    UserID INT NOT NULL FOREIGN KEY REFERENCES Users(UserID),
+    Type NVARCHAR(50) NOT NULL,
+    Message NVARCHAR(500) NOT NULL,
+    RelatedID INT NULL,
+    CreatedDate DATETIME NOT NULL,
+    IsRead BIT DEFAULT 0,
+    ReadDate DATETIME NULL
+);
+
+-- Create stored procedures referenced in the application
+
+-- MatchUsers stored procedure
+CREATE PROCEDURE MatchUsers
+    @RequestID INT,
+    @ProviderUserID INT
+AS
+BEGIN
+    DECLARE @RequestorUserID INT;
+    
+    -- Get the requestor user ID
+    SELECT @RequestorUserID = UserID
+    FROM SkillRequests
+    WHERE RequestID = @RequestID;
+    
+    -- Create the match
+    INSERT INTO Matches (RequestID, RequestorUserID, ProviderUserID, CreatedDate, Status)
+    VALUES (@RequestID, @RequestorUserID, @ProviderUserID, GETDATE(), 'Pending');
+    
+    -- Update the request status
+    UPDATE SkillRequests
+    SET Status = 'Matched'
+    WHERE RequestID = @RequestID;
+    
+    -- Create notification for requestor
+    INSERT INTO Notifications (UserID, Type, Message, RelatedID, CreatedDate, IsRead)
+    VALUES (
+        @RequestorUserID, 
+        'MatchOffer', 
+        'Someone has offered to help with your skill request!', 
+        @RequestID, 
+        GETDATE(), 
+        0
+    );
+END;
+GO
+
+-- AcceptMatch stored procedure
+CREATE PROCEDURE AcceptMatch
+    @MatchID INT,
+    @UserID INT
+AS
+BEGIN
+    DECLARE @RequestorUserID INT;
+    DECLARE @ProviderUserID INT;
+    DECLARE @OtherUserID INT;
+    
+    -- Get match details
+    SELECT @RequestorUserID = RequestorUserID, @ProviderUserID = ProviderUserID
+    FROM Matches
+    WHERE MatchID = @MatchID;
+    
+    -- Verify user is part of this match
+    IF @UserID = @RequestorUserID
+    BEGIN
+        -- Update match status
+        UPDATE Matches
+        SET Status = 'Accepted'
+        WHERE MatchID = @MatchID;
+        
+        -- Set other user ID for notification
+        SET @OtherUserID = @ProviderUserID;
+        
+        -- Create notification for provider
+        INSERT INTO Notifications (UserID, Type, Message, RelatedID, CreatedDate, IsRead)
+        VALUES (
+            @OtherUserID, 
+            'MatchAccepted', 
+            'Your offer to help has been accepted!', 
+            @MatchID, 
+            GETDATE(), 
+            0
+        );
+    END
+    ELSE IF @UserID = @ProviderUserID
+    BEGIN
+        -- This branch is for future use if providers can also accept matches
+        -- Currently, only requestors can accept matches based on your app logic
+        RAISERROR('Only the requestor can accept a match', 16, 1);
+    END
+    ELSE
+    BEGIN
+        RAISERROR('User is not part of this match', 16, 1);
+    END
+END;
+GO
+
+-- CreateSkillSwapTransaction stored procedure
+CREATE PROCEDURE CreateSkillSwapTransaction
+    @MatchID INT,
+    @StartDate DATETIME,
+    @EndDate DATETIME,
+    @Notes NVARCHAR(1000)
+AS
+BEGIN
+    DECLARE @RequestorUserID INT;
+    DECLARE @ProviderUserID INT;
+    
+    -- Get match details
+    SELECT @RequestorUserID = RequestorUserID, @ProviderUserID = ProviderUserID
+    FROM Matches
+    WHERE MatchID = @MatchID;
+    
+    -- Create transaction
+    INSERT INTO Transactions (MatchID, StartDate, EndDate, Notes, Status, CreatedDate)
+    VALUES (@MatchID, @StartDate, @EndDate, @Notes, 'Scheduled', GETDATE());
+    
+    DECLARE @TransactionID INT = SCOPE_IDENTITY();
+    
+    -- Create notifications for both users
+    INSERT INTO Notifications (UserID, Type, Message, RelatedID, CreatedDate, IsRead)
+    VALUES (
+        @RequestorUserID, 
+        'TransactionScheduled', 
+        'A skill swap session has been scheduled!', 
+        @TransactionID, 
+        GETDATE(), 
+        0
+    );
+    
+    INSERT INTO Notifications (UserID, Type, Message, RelatedID, CreatedDate, IsRead)
+    VALUES (
+        @ProviderUserID, 
+        'TransactionScheduled', 
+        'A skill swap session has been scheduled!', 
+        @TransactionID, 
+        GETDATE(), 
+        0
+    );
+END;
+GO

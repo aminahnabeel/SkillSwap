@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Transaction - SkillSwap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/active_transaction.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+{% include 'partials/header.html' %}
+
+<main>
+    <section class="active-transaction">
+        <div class="container">
+            <div class="page-header">
+                <a href="{{ url_for('dashboard') }}" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <h1>Active Transaction</h1>
+                <div class="transaction-status">
+                    <span class="status-badge status-{{ transaction.Status|lower }}">
+                        <i class="fas fa-{{ 'check-circle' if transaction.Status == 'Completed' else 'clock' }}"></i>
+                        {{ transaction.Status }}
+                    </span>
+                </div>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Transaction Overview -->
+            <div class="transaction-overview">
+                <div class="skill-info">
+                    <div class="skill-header">
+                        <h2>{{ transaction.SkillName }}</h2>
+                        <span class="category-badge">{{ transaction.CategoryName }}</span>
+                    </div>
+                    <p class="skill-description">{{ transaction.SkillDescription or 'No description available' }}</p>
+                    <div class="proficiency-info">
+                        <span class="desired-level">Desired Level: <strong>{{ transaction.DesiredProficiencyLevel }}</strong></span>
+                        <span class="provider-level">Provider Level: <strong>{{ transaction.ProviderProficiency or 'Not specified' }}</strong></span>
+                    </div>
+                </div>
+                
+                <div class="transaction-details">
+                    <div class="detail-item">
+                        <i class="fas fa-calendar-start"></i>
+                        <div>
+                            <label>Start Date</label>
+                            <span>{{ transaction.StartDate.strftime('%B %d, %Y at %I:%M %p') if transaction.StartDate else 'Not scheduled' }}</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <div>
+                            <label>End Date</label>
+                            <span>{{ transaction.EndDate.strftime('%B %d, %Y at %I:%M %p') if transaction.EndDate else 'Not scheduled' }}</span>
+                        </div>
+                    </div>
+                    {% if transaction.Notes %}
+                    <div class="detail-item">
+                        <i class="fas fa-sticky-note"></i>
+                        <div>
+                            <label>Notes</label>
+                            <span>{{ transaction.Notes }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Users Information -->
+            <div class="users-section">
+                <div class="user-card requestor-card">
+                    <div class="user-header">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <h3>{{ transaction.RequestorFirstName }} {{ transaction.RequestorLastName }}</h3>
+                            <p class="username">@{{ transaction.RequestorUsername }}</p>
+                            <div class="user-role">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Skill Seeker</span>
+                            </div>
+                        </div>
+                        {% if is_requestor %}
+                            <span class="you-badge">You</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="user-details">
+                        {% if transaction.RequestorLocation %}
+                        <div class="detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ transaction.RequestorLocation }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="detail">
+                            <i class="fas fa-star"></i>
+                            <span>{{ transaction.RequestorReputation or 0 }} reputation</span>
+                        </div>
+                    </div>
+                    
+                    <div class="request-description">
+                        <h4>What they're looking for:</h4>
+                        <p>{{ transaction.RequestDescription or 'No specific description provided.' }}</p>
+                    </div>
+                    
+                    {% if not is_requestor %}
+                    <div class="user-actions">
+                        <a href="{{ url_for('conversation', other_user_id=transaction.RequestorUserID) }}" class="btn btn-secondary">
+                            <i class="fas fa-comments"></i> Message
+                        </a>
+                        <a href="{{ url_for('profile', user_id=transaction.RequestorUserID) }}" class="btn btn-outline">
+                            <i class="fas fa-user"></i> View Profile
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="connection-arrow">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                
+                <div class="user-card provider-card">
+                    <div class="user-header">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <h3>{{ transaction.ProviderFirstName }} {{ transaction.ProviderLastName }}</h3>
+                            <p class="username">@{{ transaction.ProviderUsername }}</p>
+                            <div class="user-role">
+                                <i class="fas fa-hands-helping"></i>
+                                <span>Skill Provider</span>
+                            </div>
+                        </div>
+                        {% if not is_requestor %}
+                            <span class="you-badge">You</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="user-details">
+                        {% if transaction.ProviderLocation %}
+                        <div class="detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ transaction.ProviderLocation }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="detail">
+                            <i class="fas fa-star"></i>
+                            <span>{{ transaction.ProviderReputation or 0 }} reputation</span>
+                        </div>
+                        {% if transaction.ProviderExperience %}
+                        <div class="detail">
+                            <i class="fas fa-clock"></i>
+                            <span>{{ transaction.ProviderExperience }} years experience</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="provider-expertise">
+                        <h4>Their expertise:</h4>
+                        <div class="expertise-level">
+                            <span class="level-badge level-{{ transaction.ProviderProficiency|lower if transaction.ProviderProficiency else 'unknown' }}">
+                                {{ transaction.ProviderProficiency or 'Level not specified' }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    {% if is_requestor %}
+                    <div class="user-actions">
+                        <a href="{{ url_for('conversation', other_user_id=transaction.ProviderUserID) }}" class="btn btn-secondary">
+                            <i class="fas fa-comments"></i> Message
+                        </a>
+                        <a href="{{ url_for('profile', user_id=transaction.ProviderUserID) }}" class="btn btn-outline">
+                            <i class="fas fa-user"></i> View Profile
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Transaction Actions -->
+            <div class="transaction-actions">
+                <div class="action-section">
+                    <h3>Transaction Actions</h3>
+                    
+                    <div class="action-buttons">
+                        <a href="{{ url_for('conversation', other_user_id=other_user_id) }}" class="btn btn-primary">
+                            <i class="fas fa-comments"></i> Send Message
+                        </a>
+                        
+                        {% if transaction.Status != 'Completed' and can_complete %}
+                        <form action="{{ url_for('complete_transaction', transaction_id=transaction.TransactionID) }}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-success" onclick="return confirm('Mark this transaction as completed?')">
+                                <i class="fas fa-check-circle"></i> Mark as Completed
+                            </button>
+                        </form>
+                        {% endif %}
+                        
+                        {% if transaction.Status == 'Completed' and not has_reviewed %}
+                        <a href="{{ url_for('leave_review', transaction_id=transaction.TransactionID) }}" class="btn btn-warning">
+                            <i class="fas fa-star"></i> Leave Review
+                        </a>
+                        {% endif %}
+                        
+                        {% if has_reviewed %}
+                        <span class="review-status">
+                            <i class="fas fa-check-circle"></i> Review Submitted
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Progress Timeline -->
+                <div class="progress-timeline">
+                    <h4>Transaction Progress</h4>
+                    <div class="timeline">
+                        <div class="timeline-item completed">
+                            <div class="timeline-marker">
+                                <i class="fas fa-handshake"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h5>Match Accepted</h5>
+                                <p>Both parties agreed to the skill exchange</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item completed">
+                            <div class="timeline-marker">
+                                <i class="fas fa-calendar-plus"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h5>Session Scheduled</h5>
+                                <p>{{ transaction.StartDate.strftime('%B %d, %Y') if transaction.StartDate else 'Date TBD' }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item {{ 'completed' if transaction.Status == 'Completed' else 'pending' }}">
+                            <div class="timeline-marker">
+                                <i class="fas fa-{{ 'check-circle' if transaction.Status == 'Completed' else 'clock' }}"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h5>Session {{ 'Completed' if transaction.Status == 'Completed' else 'In Progress' }}</h5>
+                                <p>
+                                    {% if transaction.Status == 'Completed' %}
+                                        Completed on {{ transaction.CompletedDate.strftime('%B %d, %Y') if transaction.CompletedDate else 'Recently' }}
+                                    {% else %}
+                                        {% if can_complete %}
+                                            Ready to be marked as completed
+                                        {% else %}
+                                            Scheduled until {{ transaction.EndDate.strftime('%B %d, %Y at %I:%M %p') if transaction.EndDate else 'TBD' }}
+                                        {% endif %}
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item {{ 'completed' if has_reviewed else 'pending' }}">
+                            <div class="timeline-marker">
+                                <i class="fas fa-{{ 'star' if has_reviewed else 'star-o' }}"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h5>Review {{ 'Submitted' if has_reviewed else 'Pending' }}</h5>
+                                <p>
+                                    {% if has_reviewed %}
+                                        Thank you for your feedback!
+                                    {% else %}
+                                        Share your experience after completion
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% include 'partials/footer.html' %}
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

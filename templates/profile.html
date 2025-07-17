@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile - SkillSwap</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/profile.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+{% include 'partials/header.html' %}
+
+<main>
+    <section class="profile-section">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="profile-container">
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <div class="avatar-circle">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <h1 class="profile-name">{{ user.FirstName }} {{ user.LastName }}</h1>
+                        <p class="profile-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span id="location-display">{{ user.Location or 'Location not specified' }}</span>
+                        </p>
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">{{ skill_stats.total_skills }}</span>
+                                <span class="stat-label">Skills</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">{{ skill_stats.verified_skills }}</span>
+                                <span class="stat-label">Verified</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">{{ skill_stats.expert_skills }}</span>
+                                <span class="stat-label">Expert</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <!-- Only show edit button for own profile -->
+                        {% if user.is_own_profile %}
+                            <button id="edit-btn" class="btn btn-primary">
+                                <i class="fas fa-edit"></i>
+                                Edit Profile
+                            </button>
+                        {% else %}
+                            <button class="btn btn-secondary" onclick="sendMessage({{ user.UserID }})">
+                                <i class="fas fa-envelope"></i>
+                                Send Message
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Profile Content -->
+                <div class="profile-content">
+                    <!-- About Section -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-user-circle"></i> About</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="bio-section">
+                                <p id="bio-display">{{ user.Bio or 'No bio available yet.' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills Section -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-star"></i> Skills</h3>
+                            <!-- Only show add skill button for own profile -->
+                            {% if user.is_own_profile %}
+                                <button class="btn btn-secondary btn-sm" id="add-skill-btn">
+                                    <i class="fas fa-plus"></i>
+                                    Add Skill
+                                </button>
+                            {% endif %}
+                        </div>
+                        <div class="card-content">
+                            <div class="skills-grid" id="skills-container">
+                                {% if skills %}
+                                    {% for skill in skills %}
+                                        <div class="skill-tag" data-skill-id="{{ skill.UserSkillID }}">
+                                            <div class="skill-info">
+                                                <span class="skill-name">{{ skill.SkillName }}</span>
+                                                <span class="skill-category">{{ skill.Category }}</span>
+                                            </div>
+                                            <div class="skill-details">
+                                                <span class="skill-level level-{{ skill.ProficiencyLevel.lower() }}">
+                                                    {{ skill.ProficiencyLevel }}
+                                                </span>
+                                                <span class="skill-experience">
+                                                    {{ skill.YearsExperience }} yr{{ 's' if skill.YearsExperience != 1 else '' }}
+                                                </span>
+                                                {% if skill.IsVerified %}
+                                                    <span class="skill-verified">
+                                                        <i class="fas fa-check-circle"></i>
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                            <!-- Only show remove button for own profile -->
+                                            {% if user.is_own_profile %}
+                                                <button class="skill-remove" onclick="removeSkill({{ skill.UserSkillID }})">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="no-skills">
+                                        {% if user.is_own_profile %}
+                                            No skills added yet. Click "Add Skill" to get started!
+                                        {% else %}
+                                            No skills listed yet.
+                                        {% endif %}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-envelope"></i> Contact Information</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="contact-info">
+                                {% if user.is_own_profile %}
+                                    <div class="contact-item">
+                                        <i class="fas fa-envelope"></i>
+                                        <span>{{ user.Email }}</span>
+                                    </div>
+                                {% endif %}
+                                <div class="contact-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Member since {{ user.CreatedAt.strftime('%B %Y') if user.CreatedAt else 'Unknown' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reviews Section (only for other users' profiles) -->
+                    {% if not user.is_own_profile and reviews %}
+                        <div class="profile-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-star"></i> Reviews</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="reviews-list">
+                                    {% for review in reviews %}
+                                        <div class="review-item">
+                                            <div class="review-header">
+                                                <span class="reviewer-name">{{ review.ReviewerUsername }}</span>
+                                                <span class="review-rating">
+                                                    {% for i in range(review.Rating) %}
+                                                        <i class="fas fa-star"></i>
+                                                    {% endfor %}
+                                                </span>
+                                            </div>
+                                            <p class="review-comment">{{ review.Comment }}</p>
+                                            <span class="review-date">{{ review.CreatedDate.strftime('%B %d, %Y') }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Edit Form Modal (only for own profile) -->
+            {% if user.is_own_profile %}
+                <div id="edit-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Edit Profile</h2>
+                            <button class="close-btn" id="close-modal">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <form action="{{ url_for('edit_profile') }}" method="post" class="edit-form">
+                            <input type="hidden" name="profile_id" value="{{ user.UserID }}">
+                            <div class="form-group">
+                                <label for="first_name">First Name</label>
+                                <input type="text" id="first_name" name="first_name" value="{{ user.FirstName }}" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="last_name">Last Name</label>
+                                <input type="text" id="last_name" name="last_name" value="{{ user.LastName }}" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bio">Bio</label>
+                                <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself...">{{ user.Bio }}</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="location">Location</label>
+                                <input type="text" id="location" name="location" value="{{ user.Location }}" placeholder="City, Country">
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Save Changes
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="cancel-edit">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Add Skill Modal (only for own profile) -->
+                <div id="add-skill-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Add New Skill</h2>
+                            <button class="close-btn" id="close-skill-modal">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <form action="{{ url_for('add_skill') }}" method="post" class="edit-form">
+                            <input type="hidden" name="profile_id" value="{{ user.UserID }}">
+                            <div class="form-group">
+                                <label for="skill_id">Skill</label>
+                                <select id="skill_id" name="skill_id" required>
+                                    <option value="">Select a skill...</option>
+                                    <!-- Skills will be loaded via JavaScript -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="proficiency_level">Proficiency Level</label>
+                                <select id="proficiency_level" name="proficiency_level" required>
+                                    <option value="">Select level...</option>
+                                    <option value="Beginner">Beginner</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Advanced">Advanced</option>
+                                    <option value="Expert">Expert</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="years_experience">Years of Experience</label>
+                                <input type="number" id="years_experience" name="years_experience" min="0" max="50" value="0">
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i>
+                                    Add Skill
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="cancel-add-skill">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</main>
+
+{% include 'partials/footer.html' %}
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+    // Store user profile data for JavaScript use
+    const userProfileData = {
+        isOwnProfile: {{ 'true' if user.is_own_profile else 'false' }}:
+        userId: {{ user.UserID }}
+    };
+
+    // Profile functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Only initialize edit functionality for own profile
+        if (userProfileData.isOwnProfile) {
+            initializeEditFunctionality();
+        }
+    });
+
+    function initializeEditFunctionality() {
+        // Edit profile modal elements
+        const editBtn = document.getElementById('edit-btn');
+        const editModal = document.getElementById('edit-modal');
+        const closeModal = document.getElementById('close-modal');
+        const cancelEdit = document.getElementById('cancel-edit');
+
+        // Add skill modal elements
+        const addSkillBtn = document.getElementById('add-skill-btn');
+        const addSkillModal = document.getElementById('add-skill-modal');
+        const closeSkillModal = document.getElementById('close-skill-modal');
+        const cancelAddSkill = document.getElementById('cancel-add-skill');
+
+        // Edit profile functionality
+        if (editBtn) {
+            editBtn.addEventListener('click', function() {
+                editModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        function closeEditModal() {
+            if (editModal) {
+                editModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        if (closeModal) closeModal.addEventListener('click', closeEditModal);
+        if (cancelEdit) cancelEdit.addEventListener('click', closeEditModal);
+
+        // Add skill functionality
+        if (addSkillBtn) {
+            addSkillBtn.addEventListener('click', function() {
+                loadSkills();
+                addSkillModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        function closeAddSkillModal() {
+            if (addSkillModal) {
+                addSkillModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        if (closeSkillModal) closeSkillModal.addEventListener('click', closeAddSkillModal);
+        if (cancelAddSkill) cancelAddSkill.addEventListener('click', closeAddSkillModal);
+
+        // Close modals when clicking outside
+        if (editModal) {
+            editModal.addEventListener('click', function(e) {
+                if (e.target === editModal) closeEditModal();
+            });
+        }
+
+        if (addSkillModal) {
+            addSkillModal.addEventListener('click', function(e) {
+                if (e.target === addSkillModal) closeAddSkillModal();
+            });
+        }
+
+        // Load skills for dropdown
+        function loadSkills() {
+            fetch('/get_skills')
+                .then(response => response.json())
+                .then(data => {
+                    const skillSelect = document.getElementById('skill_id');
+                    if (skillSelect) {
+                        skillSelect.innerHTML = '<option value="">Select a skill...</option>';
+                        
+                        if (data.skills) {
+                            let currentCategory = '';
+                            data.skills.forEach(skill => {
+                                if (skill.Category !== currentCategory) {
+                                    if (currentCategory !== '') {
+                                        skillSelect.appendChild(document.createElement('option')).disabled = true;
+                                    }
+                                    const optgroup = document.createElement('optgroup');
+                                    optgroup.label = skill.Category;
+                                    skillSelect.appendChild(optgroup);
+                                    currentCategory = skill.Category;
+                                }
+                                
+                                const option = document.createElement('option');
+                                option.value = skill.SkillID;
+                                option.textContent = skill.SkillName;
+                                skillSelect.lastElementChild.appendChild(option);
+                            });
+                        }
+                    }
+                })
+                .catch(error => console.error('Error loading skills:', error));
+        }
+    }
+
+    // Remove skill function - available globally but only works for own profile
+    function removeSkill(userSkillId) {
+        if (userProfileData.isOwnProfile) {
+            if (confirm('Are you sure you want to remove this skill?')) {
+                window.location.href = `/remove_skill/${userSkillId}`;
+            }
+        } else {
+            alert('You can only remove skills from your own profile.');
+        }
+    }
+
+    // Send message function - available globally for other users' profiles
+    function sendMessage(userId) {
+        if (!userProfileData.isOwnProfile) {
+            window.location.href = `/conversation/${userId}`;
+        } else {
+            alert('You cannot send a message to yourself.');
+        }
+    }
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

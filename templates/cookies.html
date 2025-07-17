@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Policy | Modern Website</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/legal.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+        {% include 'partials/header.html' %}
+
+
+    <!-- Page Header -->
+    <section class="page-header bg-gradient-primary">
+        <div class="container">
+            <h1>Cookie Policy</h1>
+            <p style="color: #fff;">Understanding how we use cookies and how you can control them</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="legal-section">
+        <div class="container">
+            <div class="legal-content">
+                <div class="legal-intro">
+                    <p>This Cookie Policy explains how we use cookies and similar technologies to recognize you when you visit our website. It explains what these technologies are and why we use them, as well as your rights to control our use of them.</p>
+                </div>
+
+                <div class="legal-section-item">
+                    <h2>What are cookies?</h2>
+                    <p>Cookies are small data files that are placed on your computer or mobile device when you visit a website. Cookies are widely used by website owners in order to make their websites work, or to work more efficiently, as well as to provide reporting information.</p>
+                    <p>Cookies set by the website owner (in this case, our company) are called "first-party cookies". Cookies set by parties other than the website owner are called "third-party cookies". Third-party cookies enable third-party features or functionality to be provided on or through the website (e.g., advertising, interactive content, and analytics). The parties that set these third-party cookies can recognize your computer both when it visits the website in question and also when it visits certain other websites.</p>
+                </div>
+
+                <div class="legal-section-item">
+                    <h2>Why do we use cookies?</h2>
+                    <p>We use first-party and third-party cookies for several reasons. Some cookies are required for technical reasons in order for our website to operate, and we refer to these as "essential" or "strictly necessary" cookies. Other cookies also enable us to track and target the interests of our users to enhance the experience on our website. Third parties serve cookies through our website for advertising, analytics, and other purposes.</p>
+                    
+                    <h3>The specific types of cookies served through our website and the purposes they perform:</h3>
+                    
+                    <div class="cookie-table-container">
+                        <table class="cookie-table">
+                            <thead>
+                                <tr>
+                                    <th>Type of Cookie</th>
+                                    <th>Purpose</th>
+                                    <th>Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Essential Cookies</td>
+                                    <td>These cookies are strictly necessary to provide you with services available through our website and to use some of its features, such as access to secure areas.</td>
+                                    <td>Session / Persistent</td>
+                                </tr>
+                                <tr>
+                                    <td>Performance & Functionality Cookies</td>
+                                    <td>These cookies are used to enhance the performance and functionality of our website but are non-essential to their use. However, without these cookies, certain functionality may become unavailable.</td>
+                                    <td>Session / Persistent</td>
+                                </tr>
+                                <tr>
+                                    <td>Analytics & Customization Cookies</td>
+                                    <td>These cookies collect information that is used either in aggregate form to help us understand how our website is being used or how effective our marketing campaigns are, or to help us customize our website for you.</td>
+                                    <td>Session / Persistent</td>
+                                </tr>
+                                <tr>
+                                    <td>Advertising Cookies</td>
+                                    <td>These cookies are used to make advertising messages more relevant to you. They perform functions like preventing the same ad from continuously reappearing, ensuring that ads are properly displayed for advertisers, and in some cases selecting advertisements that are based on your interests.</td>
+                                    <td>Persistent</td>
+                                </tr>
+                                <tr>
+                                    <td>Social Media Cookies</td>
+                                    <td>These cookies are used to enable you to share pages and content that you find interesting on our website through third-party social networking and other websites. These cookies may also be used for advertising purposes.</td>
+                                    <td>Persistent</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="legal-section-item">
+                    <h2>How can you control cookies?</h2>
+                    <p>You have the right to decide whether to accept or reject cookies. You can exercise your cookie rights by setting your preferences in the Cookie Consent Manager. The Cookie Consent Manager allows you to select which categories of cookies you accept or reject. Essential cookies cannot be rejected as they are strictly necessary to provide you with services.</p>
+                    <p>If you choose to reject cookies, you may still use our website though your access to some functionality and areas of our website may be restricted. You may also set or amend your web browser controls to accept or refuse cookies.</p>
+                </div>
+
+                <div class="legal-section-item">
+                    <h2>How often will we update this Cookie Policy?</h2>
+                    <p>We may update this Cookie Policy from time to time in order to reflect, for example, changes to the cookies we use or for other operational, legal or regulatory reasons. Please therefore re-visit this Cookie Policy regularly to stay informed about our use of cookies and related technologies.</p>
+                    <p>The date at the top of this Cookie Policy indicates when it was last updated.</p>
+                </div>
+
+                <div class="legal-section-item">
+                    <h2>Where can you get further information?</h2>
+                    <p>If you have any questions about our use of cookies or other technologies, please email us at <a href="mailto:privacy@modernsite.com">privacy@modernsite.com</a> or by post to:</p>
+                    <p>
+                        ModernSite Inc.<br>
+                        123 Modern Street<br>
+                        Tech City, TC 12345<br>
+                        United States
+                    </p>
+                </div>
+            </div>
+
+            <!-- Cookie Settings -->
+            <div class="cookie-settings-container">
+                <h3>Cookie Settings</h3>
+                <p>You can adjust your cookie preferences here. These settings allow you to control which types of cookies you allow on our website.</p>
+                
+                <div class="cookie-settings">
+                    <div class="cookie-setting-item">
+                        <div class="setting-label">
+                            <h4>Essential Cookies</h4>
+                            <p>These cookies are necessary for the website to function and cannot be switched off in our systems.</p>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch disabled">
+                                <input type="checkbox" checked disabled>
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="always-on">Always On</span>
+                        </div>
+                    </div>
+                    
+                    <div class="cookie-setting-item">
+                        <div class="setting-label">
+                            <h4>Performance & Functionality Cookies</h4>
+                            <p>These cookies allow us to enhance the performance and functionality of our website.</p>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="cookie-setting-item">
+                        <div class="setting-label">
+                            <h4>Analytics & Customization Cookies</h4>
+                            <p>These cookies help us understand how visitors interact with our website.</p>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="cookie-setting-item">
+                        <div class="setting-label">
+                            <h4>Advertising Cookies</h4>
+                            <p>These cookies are used to make advertising messages more relevant to you.</p>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="cookie-setting-item">
+                        <div class="setting-label">
+                            <h4>Social Media Cookies</h4>
+                            <p>These cookies enable sharing functionality with social media platforms.</p>
+                        </div>
+                        <div class="setting-control">
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cookie-buttons">
+                    <button class="btn btn-outline">Reject All</button>
+                    <button class="btn btn-primary">Save Preferences</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+        {% include 'partials/footer.html' %}
+
+    <!-- JavaScript for Cookie Settings -->
+    <script>
+        // Simple JavaScript to handle cookie settings
+        document.addEventListener('DOMContentLoaded', function() {
+            const saveButton = document.querySelector('.cookie-buttons .btn-primary');
+            const rejectButton = document.querySelector('.cookie-buttons .btn-outline');
+            const toggles = document.querySelectorAll('.switch input[type="checkbox"]:not([disabled])');
+            
+            // Save preferences
+            saveButton.addEventListener('click', function() {
+                const preferences = {};
+                toggles.forEach(toggle => {
+                    const category = toggle.closest('.cookie-setting-item').querySelector('h4').textContent;
+                    preferences[category] = toggle.checked;
+                });
+                
+                // Here you would typically save these preferences to cookies or localStorage
+                localStorage.setItem('cookiePreferences', JSON.stringify(preferences));
+                
+                // Show confirmation
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success';
+                alert.innerHTML = '<i class="fa-solid fa-check"></i> Your cookie preferences have been saved.';
+                
+                const container = document.querySelector('.cookie-settings-container');
+                container.insertBefore(alert, container.firstChild);
+                
+                // Remove alert after 3 seconds
+                setTimeout(() => {
+                    alert.remove();
+                }, 3000);
+            });
+            
+            // Reject all
+            rejectButton.addEventListener('click', function() {
+                toggles.forEach(toggle => {
+                    toggle.checked = false;
+                });
+                
+                // Save the rejected preferences
+                const preferences = {};
+                toggles.forEach(toggle => {
+                    const category = toggle.closest('.cookie-setting-item').querySelector('h4').textContent;
+                    preferences[category] = false;
+                });
+                
+                localStorage.setItem('cookiePreferences', JSON.stringify(preferences));
+                
+                // Show confirmation
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-info';
+                alert.innerHTML = '<i class="fa-solid fa-info-circle"></i> All optional cookies have been rejected.';
+                
+                const container = document.querySelector('.cookie-settings-container');
+                container.insertBefore(alert, container.firstChild);
+                
+                // Remove alert after 3 seconds
+                setTimeout(() => {
+                    alert.remove();
+                }, 3000);
+            });
+            
+            // Load saved preferences if they exist
+            const savedPreferences = localStorage.getItem('cookiePreferences');
+            if (savedPreferences) {
+                const preferences = JSON.parse(savedPreferences);
+                toggles.forEach(toggle => {
+                    const category = toggle.closest('.cookie-setting-item').querySelector('h4').textContent;
+                    if (preferences[category] !== undefined) {
+                        toggle.checked = preferences[category];
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

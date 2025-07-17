@@ -1,0 +1,578 @@
+/* how-it-works.css - Modern UI for How It Works Page */
+
+/* Page Header - Using the gradient background as specified */
+.page-header.bg-gradient-primary {
+  background: var(--primary-gradient);
+  color: var(--white-color);
+  text-align: center;
+  padding: 4rem 0;
+  margin-bottom: 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header.bg-gradient-primary::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  animation: pulse 15s infinite linear;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(5%, 5%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.page-header h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--white-color);
+  -webkit-text-fill-color: var(--white-color);
+  position: relative;
+  z-index: 1;
+}
+
+.page-header p {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* How It Works Section */
+.how-it-works {
+  padding: 2rem 0 5rem;
+}
+
+.section-intro {
+  max-width: 800px;
+  margin: 0 auto 4rem;
+  text-align: center;
+  font-size: 1.25rem;
+  color: var(--gray-color);
+  line-height: 1.7;
+}
+
+/* Steps Container */
+.steps-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.step-card {
+  display: flex;
+  gap: 2.5rem;
+  background-color: var(--white-color);
+  border-radius: var(--border-radius-lg);
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+.step-number {
+  width: 70px;
+  height: 70px;
+  background: var(--primary-gradient);
+  color: var(--white-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+  position: relative;
+  z-index: 2;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-content h3 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: var(--dark-color);
+  position: relative;
+  display: inline-block;
+}
+
+.step-content h3::after {
+  content: "";
+  position: absolute;
+  width: 40px;
+  height: 3px;
+  background: var(--primary-gradient);
+  bottom: -8px;
+  left: 0;
+  border-radius: 2px;
+}
+
+.step-content > p {
+  font-size: 1.125rem;
+  color: var(--gray-color);
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
+
+.step-image {
+  margin: 1.5rem 0;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.step-card:hover .step-image {
+  transform: scale(1.02);
+}
+
+.step-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: filter 0.3s ease;
+}
+
+.step-image img:hover {
+  filter: brightness(1.05);
+}
+
+.step-tips {
+  background-color: rgba(99, 102, 241, 0.05);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  border-left: 4px solid var(--primary-color);
+}
+
+.step-tips h4 {
+  margin-bottom: 0.75rem;
+  color: var(--primary-color);
+  font-size: 1.25rem;
+}
+
+.step-tips ul {
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.step-tips li {
+  margin-bottom: 0.5rem;
+  color: var(--gray-color);
+  line-height: 1.6;
+}
+
+.step-tips li::marker {
+  color: var(--primary-color);
+}
+
+/* FAQ Preview Section */
+.faq-preview {
+  background-color: var(--lighter-gray);
+  padding: 5rem 0;
+  margin-top: 4rem;
+}
+
+.section-header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 3.5rem;
+  position: relative;
+}
+
+.section-header h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--dark-color);
+  position: relative;
+  display: inline-block;
+}
+
+.section-header h2::after {
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 4px;
+  background: var(--primary-gradient);
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+
+.section-header p {
+  font-size: 1.25rem;
+  color: var(--gray-color);
+}
+
+.faq-accordion {
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+
+.faq-item {
+  background-color: var(--white-color);
+  border-radius: var(--border-radius);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.faq-item:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.faq-question {
+  padding: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.faq-question:hover {
+  background-color: rgba(99, 102, 241, 0.03);
+}
+
+.faq-question h3 {
+  margin-bottom: 0;
+  font-size: 1.25rem;
+  color: var(--dark-color);
+  font-weight: 600;
+}
+
+.faq-question i {
+  color: var(--primary-color);
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.faq-answer {
+  padding: 0 1.5rem 1.5rem;
+  display: none;
+  color: var(--gray-color);
+  line-height: 1.7;
+}
+
+.faq-answer p {
+  margin-bottom: 0;
+}
+
+.faq-answer a {
+  color: var(--primary-color);
+  font-weight: 500;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.faq-answer a::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background-color: var(--primary-color);
+  bottom: -2px;
+  left: 0;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
+}
+
+.faq-answer a:hover {
+  color: var(--primary-dark);
+}
+
+.faq-answer a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.faq-item.active {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.faq-item.active .faq-question {
+  background-color: rgba(99, 102, 241, 0.05);
+}
+
+.faq-item.active .faq-question i {
+  transform: rotate(180deg);
+}
+
+.faq-item.active .faq-answer {
+  display: block;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* CTA Section */
+.cta {
+  padding: 6rem 0;
+  background: var(--primary-gradient);
+  color: var(--white-color);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  animation: pulse 15s infinite linear;
+}
+
+.cta .container {
+  position: relative;
+  z-index: 1;
+}
+
+.cta h2 {
+  margin-bottom: 1.5rem;
+  font-size: 2.5rem;
+  color: var(--white-color);
+}
+
+.cta p {
+  margin-bottom: 2.5rem;
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta .btn {
+  background-color: var(--white-color);
+  color: var(--primary-color);
+  font-weight: 700;
+  padding: 1rem 2.5rem;
+  font-size: 1.125rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.cta .btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Button Styles */
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.75rem;
+  font-weight: 600;
+  text-align: center;
+  border: 2px solid var(--primary-color);
+  background-color: transparent;
+  color: var(--primary-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-outline:hover {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+/* Utility Classes */
+.text-center {
+  text-align: center;
+}
+
+.mt-4 {
+  margin-top: 2rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+  .page-header h1 {
+    font-size: 2.5rem;
+  }
+  
+  .section-header h2 {
+    font-size: 2.25rem;
+  }
+  
+  .step-card {
+    padding: 2rem;
+    gap: 2rem;
+  }
+  
+  .step-number {
+    width: 60px;
+    height: 60px;
+    font-size: 1.75rem;
+  }
+  
+  .step-content h3 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    padding: 3rem 0;
+  }
+  
+  .page-header h1 {
+    font-size: 2.25rem;
+  }
+  
+  .section-intro {
+    font-size: 1.125rem;
+    margin-bottom: 3rem;
+  }
+  
+  .step-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  
+  .step-content h3::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .faq-question h3 {
+    font-size: 1.125rem;
+  }
+  
+  .cta h2 {
+    font-size: 2rem;
+  }
+  
+  .cta p {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-header h1 {
+    font-size: 2rem;
+  }
+  
+  .page-header p {
+    font-size: 1.125rem;
+  }
+  
+  .section-header h2 {
+    font-size: 1.75rem;
+  }
+  
+  .step-card {
+    padding: 1.5rem;
+  }
+  
+  .step-content > p {
+    font-size: 1rem;
+  }
+  
+  .step-tips {
+    padding: 1.25rem;
+  }
+  
+  .step-tips h4 {
+    font-size: 1.125rem;
+  }
+  
+  .faq-question {
+    padding: 1.25rem;
+  }
+  
+  .faq-answer {
+    padding: 0 1.25rem 1.25rem;
+  }
+  
+  .cta {
+    padding: 4rem 0;
+  }
+  
+  .cta h2 {
+    font-size: 1.75rem;
+  }
+  
+  .cta p {
+    font-size: 1rem;
+  }
+}
+
+/* JavaScript for FAQ Accordion */
+/* Add this script to your page or main.js file */
+/*
+document.addEventListener('DOMContentLoaded', function() {
+  const faqItems = document.querySelectorAll('.faq-item');
+  
+  faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    
+    question.addEventListener('click', () => {
+      const isActive = item.classList.contains('active');
+      
+      // Close all items
+      faqItems.forEach(faqItem => {
+        faqItem.classList.remove('active');
+      });
+      
+      // If the clicked item wasn't active, make it active
+      if (!isActive) {
+        item.classList.add('active');
+      }
+    });
+  });
+});
+*/

@@ -1,0 +1,126 @@
+/* Modern Footer */
+.site-footer {
+  background-color: var(--dark-color);
+  color: var(--white-color);
+  padding: 5rem 0 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at bottom right, rgba(79, 70, 229, 0.2), transparent 70%);
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 4rem;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-logo h2 {
+  color: var(--white-color);
+  margin-bottom: 1rem;
+  font-size: 1.75rem;
+}
+
+.footer-logo h2::after {
+  background: var(--primary-gradient);
+}
+
+.footer-logo p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5rem;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.footer-section h3 {
+  color: var(--white-color);
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  position: relative;
+  display: inline-block;
+}
+
+.footer-section h3::after {
+  content: "";
+  position: absolute;
+  width: 30px;
+  height: 3px;
+  background: var(--primary-gradient);
+  bottom: -8px;
+  left: 0;
+  border-radius: 2px;
+}
+
+.footer-section ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-section a {
+  color: rgba(255, 255, 255, 0.7);
+  transition: var(--transition);
+  display: inline-block;
+}
+
+.footer-section a:hover {
+  color: var(--white-color);
+  transform: translateX(5px);
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: var(--white-color);
+  transition: var(--transition);
+  font-size: 1.25rem;
+}
+
+.social-link:hover {
+  background: var(--primary-gradient);
+  color: var(--white-color);
+  transform: translateY(-5px);
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  position: relative;
+  z-index: 1;
+}
+
+.footer-bottom a {
+  color: var(--primary-light);
+}
+
+.footer-bottom a:hover {
+  color: var(--white-color);
+}

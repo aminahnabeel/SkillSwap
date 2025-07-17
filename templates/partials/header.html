@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SkillSwap - Share Your Skills, Grow Together{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Message Notification Styles -->
+    <style>
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            font-weight: bold;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+
+        .message-notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            font-weight: bold;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+            }
+        }
+
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .dropdown-item {
+            position: relative;
+        }
+
+        .dropdown-item i {
+            margin-right: 8px;
+        }
+
+        .message-icon-container {
+            position: relative;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="{{ url_for('index') }}" class="logo">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span class="logo-text">SkillSwap</span>
+                </a>
+                
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+                        <li><a href="{{ url_for('browse_skills') }}" class="nav-link">Browse Skills</a></li>
+                        <li><a href="{{ url_for('browse_requests') }}" class="nav-link">Browse Requests</a></li>
+                        <li><a href="{{ url_for('how_it_works') }}" class="nav-link">How It Works</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    {% if 'user_id' in session %}
+                        <div class="dropdown">
+                            <button class="dropdown-toggle">
+                                <i class="fas fa-bell"></i>
+                                {% if unread_notifications_count is defined and unread_notifications_count > 0 %}
+                                <span class="notification-badge">{{ unread_notifications_count }}</span>
+                                {% endif %}
+                            </button>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-header">
+                                    <h3>Notifications</h3>
+                                    <a href="{{ url_for('notifications') }}">See All</a>
+                                </div>
+                                <div class="dropdown-content">
+                                    {% if notifications %}
+                                        {% for notification in notifications %}
+                                        <a href="#" class="dropdown-item">
+                                            <div class="notification-icon">
+                                                <i class="fas fa-bell"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <div class="notification-message">{{ notification.Message }}</div>
+                                                <div class="notification-time">{{ notification.CreatedDate.strftime('%b %d, %Y') }}</div>
+                                            </div>
+                                        </a>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="dropdown-item">
+                                            <p>No new notifications</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="dropdown">
+                            <button class="dropdown-toggle">
+                                <i class="fas fa-user-circle"></i>
+                                <span>{{ session['username'] }}</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a href="{{ url_for('dashboard') }}" class="dropdown-item">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    Dashboard
+                                </a>
+                                <a href="{{ url_for('profile') }}" class="dropdown-item">
+                                    <i class="fas fa-user"></i>
+                                    My Profile
+                                </a>
+                                <a href="{{ url_for('messages') }}" class="dropdown-item message-icon-link" id="messages-link">
+                                    <span class="message-icon-container">
+                                        <i class="fas fa-envelope"></i>
+                                        <span class="message-notification-badge" id="message-notification-badge"></span>
+                                    </span>
+                                    Messages
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="{{ url_for('logout') }}" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-outline">Login</a>
+                        <a href="{{ url_for('register') }}" class="btn btn-primary">Sign Up</a>
+                    {% endif %}
+                    
+                    <button class="mobile-menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="container mt-3">
+                        <div class="alert alert-{{ category }}">
+                            {% if category == 'success' %}
+                                <i class="fas fa-check-circle"></i>
+                            {% elif category == 'error' %}
+                                <i class="fas fa-exclamation-circle"></i>
+                            {% else %}
+                                <i class="fas fa-info-circle"></i>
+                            {% endif %}
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+    <!-- Core JavaScript - Load first -->
+    <script>
+        // Global variables
+        window.skillSwapApp = {
+            socket: null,
+            messageNotificationSystem: null,
+            isLoggedIn: {% if 'user_id' in session %}true{% else %}false{% endif %},
+            userId: {% if 'user_id' in session %}'{{ session.user_id }}'{% else %}null{% endif %}
+        };
+    </script>
+
+    <!-- Socket.IO Script -->
+    {% if 'user_id' in session %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        // Initialize Socket.IO connection safely
+        try {
+            const socket = io();
+            window.skillSwapApp.socket = socket;
+            window.socket = socket; // Keep for backward compatibility
+
+            // Join user room for real-time notifications
+            socket.emit('join', { user_id: '{{ session.user_id }}' });
+
+            socket.on('connect', function() {
+                console.log('Connected to server');
+            });
+
+            socket.on('disconnect', function() {
+                console.log('Disconnected from server');
+            });
+
+            socket.on('error', function(error) {
+                console.error('Socket.IO error:', error);
+            });
+        } catch (error) {
+            console.error('Failed to initialize Socket.IO:', error);
+        }
+    </script>
+    {% endif %}
+
+    <!-- Message Notification System Script -->
+    <script>
+        // Message notification system
+        class MessageNotificationSystem {
+            constructor() {
+                this.unreadCount = 0;
+                this.notificationBadge = null;
+                this.messageLink = null;
+                this.isInitialized = false;
+                this.init();
+            }
+
+            init() {
+                try {
+                    // Find the message link and notification badge
+                    this.messageLink = document.getElementById('messages-link');
+                    this.notificationBadge = document.getElementById('message-notification-badge');
+                    
+                    if (this.messageLink && this.notificationBadge) {
+                        this.loadInitialCount();
+                        this.setupSocketListeners();
+                        this.setupClickHandler();
+                        this.isInitialized = true;
+                        console.log('Message notification system initialized');
+                    } else {
+                        console.warn('Message notification elements not found');
+                    }
+                } catch (error) {
+                    console.error('Error initializing message notification system:', error);
+                }
+            }
+
+            loadInitialCount() {
+                fetch('/api/notifications/messages/count')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.count !== undefined) {
+                            this.updateNotificationCount(data.count);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading notification count:', error);
+                    });
+            }
+
+            updateNotificationCount(count) {
+                try {
+                    this.unreadCount = count;
+                    
+                    if (this.notificationBadge) {
+                        if (count > 0) {
+                            this.notificationBadge.textContent = count > 99 ? '99+' : count.toString();
+                            this.notificationBadge.style.display = 'flex';
+                        } else {
+                            this.notificationBadge.style.display = 'none';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating notification count:', error);
+                }
+            }
+
+            setupSocketListeners() {
+                try {
+                    if (window.skillSwapApp && window.skillSwapApp.socket) {
+                        // Listen for new message notifications
+                        window.skillSwapApp.socket.on('notification_update', (data) => {
+                            if (data.type === 'message_notification') {
+                                this.updateNotificationCount(data.unread_count);
+                                this.showToastNotification('New message received!');
+                            }
+                        });
+
+                        // Listen for new messages
+                        window.skillSwapApp.socket.on('new_message', (data) => {
+                            // If we're not on the messages page, update the count
+                            if (!window.location.pathname.includes('/messages') && 
+                                !window.location.pathname.includes('/conversation')) {
+                                this.loadInitialCount();
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error setting up socket listeners:', error);
+                }
+            }
+
+            setupClickHandler() {
+                try {
+                    if (this.messageLink) {
+                        this.messageLink.addEventListener('click', () => {
+                            // Delay clearing to allow page navigation
+                            setTimeout(() => {
+                                this.clearNotifications();
+                            }, 1000);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error setting up click handler:', error);
+                }
+            }
+
+            showToastNotification(message) {
+                try {
+                    const toast = document.createElement('div');
+                    toast.className = 'toast-notification';
+                    toast.textContent = message;
+                    
+                    document.body.appendChild(toast);
+                    
+                    // Fade in
+                    setTimeout(() => {
+                        toast.style.opacity = '1';
+                    }, 100);
+                    
+                    // Fade out and remove
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        setTimeout(() => {
+                            if (toast.parentNode) {
+                                toast.parentNode.removeChild(toast);
+                            }
+                        }, 300);
+                    }, 3000);
+                } catch (error) {
+                    console.error('Error showing toast notification:', error);
+                }
+            }
+
+            clearNotifications() {
+                this.updateNotificationCount(0);
+            }
+        }
+
+        // Initialize the notification system when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                {% if 'user_id' in session %}
+                window.skillSwapApp.messageNotificationSystem = new MessageNotificationSystem();
+                window.messageNotificationSystem = window.skillSwapApp.messageNotificationSystem; // Backward compatibility
+                {% endif %}
+            } catch (error) {
+                console.error('Error initializing message notification system:', error);
+            }
+        });
+
+        // Clear notifications when user is on messages page
+        if (window.location.pathname.includes('/messages') || window.location.pathname.includes('/conversation')) {
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(() => {
+                    try {
+                        if (window.skillSwapApp && window.skillSwapApp.messageNotificationSystem) {
+                            window.skillSwapApp.messageNotificationSystem.clearNotifications();
+                        }
+                    } catch (error) {
+                        console.error('Error clearing notifications:', error);
+                    }
+                }, 1500);
+            });
+        }
+
+        // Refresh notification count when user returns to the page
+        document.addEventListener('visibilitychange', function() {
+            try {
+                if (!document.hidden && window.skillSwapApp && window.skillSwapApp.messageNotificationSystem) {
+                    setTimeout(() => {
+                        window.skillSwapApp.messageNotificationSystem.loadInitialCount();
+                    }, 500);
+                }
+            } catch (error) {
+                console.error('Error refreshing notifications:', error);
+            }
+        });
+    </script>
+
+    <!-- Mobile menu and dropdown toggle script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+                const mainNav = document.querySelector('.main-nav');
+                
+                if (mobileMenuToggle && mainNav) {
+                    mobileMenuToggle.addEventListener('click', function() {
+                        mainNav.classList.toggle('active');
+                    });
+                }
+
+                // Close dropdowns when clicking outside
+                document.addEventListener('click', function(event) {
+                    const dropdowns = document.querySelectorAll('.dropdown');
+                    dropdowns.forEach(dropdown => {
+                        if (!dropdown.contains(event.target)) {
+                            dropdown.classList.remove('active');
+                        }
+                    });
+                });
+
+                // Toggle dropdowns
+                const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+                dropdownToggles.forEach(toggle => {
+                    toggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const dropdown = this.closest('.dropdown');
+                        const isActive = dropdown.classList.contains('active');
+                        
+                        // Close all dropdowns
+                        document.querySelectorAll('.dropdown').forEach(d => {
+                            d.classList.remove('active');
+                        });
+                        
+                        // Toggle current dropdown
+                        if (!isActive) {
+                            dropdown.classList.add('active');
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error('Error initializing dropdown functionality:', error);
+            }
+        });
+    </script>
+</body>
+</html>

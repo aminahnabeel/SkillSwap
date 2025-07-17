@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ | SkillSwap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/faq.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+        {% include 'partials/header.html' %}
+
+
+    <section class="page-header bg-gradient-primary">
+        <div class="container" style="color: white !important; font-weight: bold ;">
+            <h1>Frequently Asked Questions</h1>
+            <p style="color: white; font-weight: normal;">Find answers to common questions about using SkillSwap</p>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <div class="container">
+            <div class="faq-categories">
+                <button class="faq-category active" data-category="general">General</button>
+                <button class="faq-category" data-category="account">Account & Profile</button>
+                <button class="faq-category" data-category="skills">Skills & Requests</button>
+                <button class="faq-category" data-category="matching">Matching & Scheduling</button>
+                <button class="faq-category" data-category="safety">Safety & Privacy</button>
+            </div>
+            
+            <div class="faq-content">
+                <!-- General FAQs -->
+                <div class="faq-category-content active" id="general">
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>What is SkillSwap?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>SkillSwap is a platform that connects people who want to exchange skills and knowledge. Our community is built on the principle of mutual benefit - you teach what you know, and learn what you want. It's a way to share expertise, meet new people, and grow your skillset without financial cost.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Is SkillSwap completely free to use?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Yes, SkillSwap is completely free to use. We believe in the power of community and skill sharing without financial barriers. There are no fees for creating an account, listing skills, or connecting with other users.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How is SkillSwap different from other learning platforms?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Unlike traditional learning platforms where you pay for courses or tutoring, SkillSwap is based on the concept of reciprocity. You offer your skills to others, and in return, you can learn from people with skills you're interested in. This creates a community of mutual support and learning without financial transactions.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Do I need to have skills to offer in order to join?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Everyone has something valuable to share! Your skills don't need to be advanced or professional-level. Basic cooking, language practice, computer help, or even sharing a hobby can be valuable to someone else. If you're unsure what to offer, we have a skills assessment tool to help you identify what you could teach others.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Where is SkillSwap available?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>SkillSwap is available worldwide. While in-person skill exchanges work best with local matches, many skills can be shared virtually through video calls. Our platform supports both local and remote skill sharing.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Account & Profile FAQs -->
+                <div class="faq-category-content" id="account">
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How do I create an account?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Creating an account is simple. Click the "Sign Up" button, fill in your basic information, verify your email address, and you're ready to go! You can then complete your profile by adding a photo, bio, and listing the skills you can offer.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Can I delete my account?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Yes, you can delete your account at any time. Go to your account settings, scroll to the bottom, and click "Delete Account." Please note that this action is permanent and will remove all your data from our platform.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How do I build my reputation on SkillSwap?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Your reputation is built through reviews and ratings from other users after skill exchanges. To build a strong reputation: be responsive to messages, show up on time for scheduled sessions, be prepared with materials or lessons, and provide quality instruction. The more positive reviews you receive, the higher your reputation score will be.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Skills & Requests FAQs -->
+                <div class="faq-category-content" id="skills">
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How do I add skills to my profile?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>To add skills, go to your profile and click "Add Skill." Select from our categorized list or add a custom skill. Specify your proficiency level, years of experience, and add a brief description of how you can help others learn this skill.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How do I create a skill request?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>To create a skill request, click on "Create Request" from your dashboard or the browse requests page. Select the skill you want to learn, specify your current level and learning goals, and add any specific requirements or preferences. Your request will be visible to users who can offer that skill.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>What types of skills can be exchanged?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Almost any skill can be exchanged on SkillSwap! Popular categories include technology (programming, web design), arts & crafts (painting, knitting), languages, music, cooking, fitness, academic subjects, home improvement, and professional skills like resume writing or interview preparation. If it's legal and can be taught, it's welcome on our platform.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Matching & Scheduling FAQs -->
+                <div class="faq-category-content" id="matching">
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How does the matching process work?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>When you browse skill requests, you can offer to help with ones that match your expertise. Similarly, users can offer to help with your requests. Once someone offers to help, you'll receive a notification and can accept or decline. After acceptance, you can message each other to arrange the details of your skill swap.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>Do I have to teach and learn at the same time?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>No, skill exchanges don't have to be simultaneous or with the same person. You might teach one person and learn from someone else entirely. The platform tracks your contributions and learning separately.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How do we schedule our skill swap sessions?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>After matching, you can use our built-in messaging system to discuss and agree on times, locations, and other details. Once you've agreed, you can use the "Schedule Session" feature to create a formal appointment in the system, which will send reminders to both parties.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Safety & Privacy FAQs -->
+                <div class="faq-category-content" id="safety">
+                    <div class="faq-accordion">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How do I ensure my safety when meeting someone?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>We recommend meeting in public places for your first few skill swap sessions. Always check user reviews and ratings before agreeing to meet. Our messaging system allows you to communicate without sharing personal contact information until you're comfortable. For more safety tips, please see our <a href="community-guidelines.html">Community Guidelines</a>.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>How is my personal information protected?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>We take your privacy seriously. Your contact information is never publicly displayed. You control what information is visible on your profile. Our messaging system keeps your communication private. For full details, please review our <a href="privacy.html">Privacy Policy</a>.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h3>What should I do if I have a negative experience?</h3>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>If you have a negative experience, please report it immediately through our reporting system. You can find the "Report" option on user profiles, messages, and skill listings. Our moderation team reviews all reports and takes appropriate action according to our community guidelines.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="faq-contact">
+                <h3>Still have questions?</h3>
+                <p>If you couldn't find the answer you were looking for, please contact our support team.</p>
+                <a href="support.html" class="btn btn-primary">Contact Support</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+        {% include 'partials/footer.html' %}
+
+
+    <!-- JavaScript for FAQ functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // FAQ accordion functionality
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', function() {
+                    const faqItem = this.parentElement;
+                    const answer = this.nextElementSibling;
+                    
+                    // Toggle active class on the FAQ item
+                    faqItem.classList.toggle('active');
+                    
+                    // Toggle display of the answer
+                    if (faqItem.classList.contains('active')) {
+                        answer.style.display = 'block';
+                        this.querySelector('i').classList.replace('fa-chevron-down', 'fa-chevron-up');
+                    } else {
+                        answer.style.display = 'none';
+                        this.querySelector('i').classList.replace('fa-chevron-up', 'fa-chevron-down');
+                    }
+                });
+            });
+            
+            // FAQ category tabs functionality
+            const categoryButtons = document.querySelectorAll('.faq-category');
+            const categoryContents = document.querySelectorAll('.faq-category-content');
+            
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    
+                    // Remove active class from all buttons and contents
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    categoryContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to clicked button and corresponding content
+                    this.classList.add('active');
+                    document.getElementById(category).classList.add('active');
+                });
+            });
+            
+            // Initialize: Hide all answers initially
+            document.querySelectorAll('.faq-answer').forEach(answer => {
+                answer.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

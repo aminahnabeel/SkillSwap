@@ -1,0 +1,221 @@
+
+
+/* Modern Auth Section */
+.auth-section {
+  padding: 6rem 0;
+  background-color: var(--lighter-gray);
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.auth-container {
+  max-width: 450px;
+  width: 100%;
+  margin: 0 auto;
+  background-color: var(--white-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--box-shadow-lg);
+  padding: 2.5rem;
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.auth-container:hover {
+  transform: translateY(-5px);
+}
+
+.auth-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--primary-gradient);
+}
+
+.auth-container h1 {
+  font-size: 1.75rem;
+  color: var(--dark-color);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Form Styling */
+.auth-form {
+  margin-top: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--dark-color);
+  font-size: 0.875rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--light-gray);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: var(--transition);
+  background-color: var(--white-color);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Button Styling */
+.btn {
+  display: inline-block;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.btn-primary {
+  color: var(--white-color);
+  background: var(--primary-gradient);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to right, var(--primary-dark), var(--secondary-color));
+  transform: translateY(-1px);
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+/* Alert Styling */
+.alert {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: var(--border-radius);
+  font-size: 0.875rem;
+}
+
+.alert-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: var(--secondary-color);
+}
+
+.alert-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.alert-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.alert-info {
+  background-color: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: var(--primary-color);
+}
+
+/* Auth Links */
+.auth-links {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: var(--gray-color);
+  font-size: 0.875rem;
+}
+
+.auth-links a {
+  color: var(--primary-color);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.auth-links a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+  .auth-container {
+    padding: 2rem 1.5rem;
+  }
+  
+  .auth-section {
+    padding: 3rem 0;
+  }
+  
+  .auth-container h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Animation for form elements */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-group {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.form-group:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.form-group:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.btn {
+  animation: fadeIn 0.3s ease-out forwards;
+  animation-delay: 0.3s;
+}
+
+.auth-links {
+  animation: fadeIn 0.3s ease-out forwards;
+  animation-delay: 0.4s;
+}

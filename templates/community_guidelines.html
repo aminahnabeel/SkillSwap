@@ -1,0 +1,131 @@
+{% include 'partials/header.html' %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Share Your Skills</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/community-guidelines.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<section class="page-header bg-gradient-primary">
+    <div class="container">
+        <h1>Community Guidelines</h1>
+        <p>Our principles for a positive and safe skill sharing experience</p>
+    </div>
+</section>
+
+<section class="guidelines-section">
+    <div class="container">
+        <div class="guidelines-intro">
+            <p>At SkillSwap, we believe in creating a supportive, inclusive, and safe environment where people can share knowledge and learn from each other. These community guidelines outline the behaviors and practices we expect from all members of our community.</p>
+            <p>By joining SkillSwap, you agree to follow these guidelines and contribute positively to our community. Failure to adhere to these guidelines may result in warnings, temporary suspension, or permanent removal from the platform.</p>
+        </div>
+        
+        <div class="guidelines-content">
+            <div class="guideline-card">
+                <div class="guideline-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <div class="guideline-text">
+                    <h3>Respect and Inclusivity</h3>
+                    <ul>
+                        <li>Treat all community members with respect, regardless of background, identity, or skill level</li>
+                        <li>Use inclusive language and avoid discriminatory comments or behavior</li>
+                        <li>Be patient with learners and remember that everyone starts somewhere</li>
+                        <li>Respect different teaching and learning styles</li>
+                        <li>Provide constructive feedback rather than criticism</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="guideline-card">
+                <div class="guideline-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="guideline-text">
+                    <h3>Safety First</h3>
+                    <ul>
+                        <li>For in-person skill swaps, meet in public places for your first few sessions</li>
+                        <li>Share your meeting details with a friend or family member</li>
+                        <li>Trust your instincts - if something feels wrong, cancel or reschedule</li>
+                        <li>Keep communication on the platform until you're comfortable moving to other channels</li>
+                        <li>Report any concerning behavior immediately</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="guideline-card">
+                <div class="guideline-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="guideline-text">
+                    <h3>Honesty and Authenticity</h3>
+                    <ul>
+                        <li>Be truthful about your skills and experience level</li>
+                        <li>Use accurate information in your profile</li>
+                        <li>Provide honest reviews based on your actual experience</li>
+                        <li>Don't make promises you can't keep</li>
+                        <li>Be transparent about your expectations and limitations</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="guideline-card">
+                <div class="guideline-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="guideline-text">
+                    <h3>Reliability and Commitment</h3>
+                    <ul>
+                        <li>Honor your scheduled appointments</li>
+                        <li>Arrive on time and prepared for skill swap sessions</li>
+                        <li>Give adequate notice if you need to cancel or reschedule</li>
+                        <li>Respond to messages in a timely manner</li>
+                        <li>Follow through on your commitments</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="guideline-card">
+                <div class="guideline-icon">
+                    <i class="fas fa-ban"></i>
+                </div>
+                <div class="guideline-text">
+                    <h3>Prohibited Activities</h3>
+                    <ul>
+                        <li>No solicitation for paid services or products</li>
+                        <li>No sharing of illegal skills or content</li>
+                        <li>No harassment, bullying, or intimidation</li>
+                        <li>No sharing of others' personal information without consent</li>
+                        <li>No creation of multiple accounts or fake profiles</li>
+                        <li>No spamming or excessive self-promotion</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="guideline-card">
+                <div class="guideline-icon">
+                    <i class="fas fa-flag"></i>
+                </div>
+                <div class="guideline-text">
+                    <h3>Reporting Issues</h3>
+                    <ul>
+                        <li>Report inappropriate behavior using the platform's reporting tools</li>
+                        <li>Provide specific details when reporting an issue</li>
+                        <li>Contact support for urgent safety concerns</li>
+                        <li>Help us maintain community standards by reporting violations</li>
+                        <li>Do not retaliate against members who report issues</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="guidelines-footer">
+            <p>These guidelines are not exhaustive, and we expect all members to use good judgment and common sense in their interactions. SkillSwap reserves the right to take action against any behavior that violates these guidelines or threatens the safety and positive experience of our community.</p>
+            <p>Our guidelines are reviewed regularly and may be updated. We will notify users of significant changes.</p>
+            <p>If you have questions about these guidelines or need to report a violation, please <a href="{{ url_for('support') }}">contact our support team</a>.</p>
+        </div>
+    </div>
+</section>
+
+{% include 'partials/footer.html' %}

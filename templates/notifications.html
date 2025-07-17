@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - SkillSwap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/notifications.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    {% include 'partials/header.html' %}
+    
+    <main>
+        <section class="notifications">
+            <div class="container">
+                <div class="page-header">
+                    <h1>Notifications</h1>
+                </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="notifications-container">
+                    {% if notifications %}
+                        <ul class="notification-list">
+                            {% for notification in notifications %}
+                                <li class="notification-item">
+                                    <div class="notification-icon">
+                                        {% if notification.Type == 'NewReview' %}
+                                            <i class="fas fa-star"></i>
+                                        {% elif notification.Type == 'MatchAccepted' %}
+                                            <i class="fas fa-handshake"></i>
+                                        {% else %}
+                                            <i class="fas fa-bell"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="notification-content">
+                                        <p>{{ notification.Message }}</p>
+                                        <span class="notification-time">{{ notification.CreatedDate.strftime('%b %d, %Y %H:%M') }}</span>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-bell"></i>
+                            <h2>No notifications</h2>
+                            <p>You don't have any notifications yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    {% include 'partials/footer.html' %}
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

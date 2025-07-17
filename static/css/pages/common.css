@@ -1,0 +1,72 @@
+/* Common Page Elements */
+/* Page Header */
+.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.page-header h1 {
+  font-size: 2.75rem;
+  margin-bottom: 0.75rem;
+  /* Removed the gradient text effect to allow inline color to work */
+  color: var(--dark-color); /* Default color if inline style is not present */
+  display: inline-block;
+}
+
+.page-header p {
+  font-size: 1.25rem;
+  color: var(--gray-color);
+  max-width: 600px;
+  margin: 0 auto;
+}
+/* Modern Lists */
+.skill-list,
+.request-list,
+.match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skill-item,
+.request-item,
+.match-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background-color: var(--lighter-gray);
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  border: 1px solid transparent;
+}
+
+.skill-item:hover,
+.request-item:hover,
+.match-item:hover {
+  background-color: rgba(99, 102, 241, 0.05);
+  border-color: var(--primary-light);
+  transform: translateX(5px);
+}
+
+.item-content {
+  flex: 1;
+}
+
+.item-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--dark-color);
+}
+
+.item-subtitle {
+  font-size: 0.875rem;
+  color: var(--gray-color);
+}
+
+.item-actions {
+  display: flex;
+  gap: 0.5rem;
+}

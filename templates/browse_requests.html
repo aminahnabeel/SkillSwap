@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Requests - SkillSwap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/browse-requests.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    {% include 'partials/header.html' %}
+    
+    <main>
+        <section class="browse-requests">
+            <div class="container">
+                <div class="page-header">
+                    <h1>Browse Skill Requests</h1>
+                    <p>Find people who need help with skills you have.</p>
+                </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="filter-container">
+                    <div class="search-box">
+                        <input type="text" id="request-search" placeholder="Search requests...">
+                        <button id="search-btn"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+                
+                {% if requests %}
+                    <div class="requests-grid" id="requests-container">
+                        {% for request in requests %}
+                            <div class="request-card">
+                                <div class="request-header">
+                                    <h3>{{ request.SkillName }}</h3>
+                                    {% if request.IsUrgent %}
+                                        <span class="badge badge-urgent">Urgent</span>
+                                    {% endif %}
+                                </div>
+                                <div class="request-details">
+                                    <p><i class="fas fa-user"></i> {{ request.Username }}</p>
+                                    <p><i class="fas fa-map-marker-alt"></i> {{ request.Location or 'No location' }}</p>
+                                    <p><i class="fas fa-star"></i> {{ request.ReputationScore }} Reputation</p>
+                                    <p><i class="fas fa-graduation-cap"></i> Desired Level: {{ request.DesiredProficiencyLevel }}</p>
+                                    <p><i class="fas fa-calendar-alt"></i> Expires: {{ request.ExpiryDate.strftime('%b %d, %Y') }}</p>
+                                </div>
+                                <div class="request-description">
+                                    <p>{{ request.Description[:150] }}{% if request.Description|length > 150 %}...{% endif %}</p>
+                                </div>
+                                <div class="request-actions">
+                                    <a href="{{ url_for('request_detail', request_id=request.RequestID) }}" class="btn btn-primary">View Details</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h2>No open requests</h2>
+                        <p>There are no open skill requests at the moment.</p>
+                        {% if 'user_id' in session %}
+                            <a href="{{ url_for('create_request') }}" class="btn btn-primary">Create a Request</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+    
+    {% include 'partials/footer.html' %}
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const requestSearch = document.getElementById('request-search');
+            const requestCards = document.querySelectorAll('.request-card');
+            
+            function filterRequests() {
+                const searchTerm = requestSearch.value.toLowerCase();
+                
+                requestCards.forEach(card => {
+                    const skillName = card.querySelector('h3').textContent.toLowerCase();
+                    const description = card.querySelector('.request-description p').textContent.toLowerCase();
+                    const username = card.querySelector('.request-details p:first-child').textContent.toLowerCase();
+                    
+                    if (skillName.includes(searchTerm) || description.includes(searchTerm) || username.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+            
+            requestSearch.addEventListener('input', filterRequests);
+            document.getElementById('search-btn').addEventListener('click', filterRequests);
+        });
+    </script>
+</body>
+</html>

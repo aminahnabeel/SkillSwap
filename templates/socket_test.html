@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Test - SkillSwap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    {% include 'partials/header.html' %}
+    
+    <main>
+        <div class="container">
+            <h1>Socket.IO Test</h1>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>Connection Status</h2>
+                </div>
+                <div class="card-body">
+                    <p>Status: <span id="connection-status">Disconnected</span></p>
+                    <p>User ID: {{ session.get('user_id', 'Not logged in') }}</p>
+                    <p>Room: user_{{ session.get('user_id', 'none') }}</p>
+                    
+                    <button id="connect-btn" class="btn btn-primary">Connect</button>
+                    <button id="disconnect-btn" class="btn btn-danger" disabled>Disconnect</button>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h2>Send Test Message</h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="room">Room (user_ID format)</label>
+                        <input type="text" id="room" class="form-control" value="user_{{ session.get('user_id', '') }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <input type="text" id="message" class="form-control" value="Test message">
+                    </div>
+                    <button id="send-btn" class="btn btn-primary">Send Message</button>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h2>Received Messages</h2>
+                </div>
+                <div class="card-body">
+                    <div id="messages" style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+                        <p class="text-muted">No messages received yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    {% include 'partials/footer.html' %}
+    
+    <script>
+        let socket;
+        
+        document.getElementById('connect-btn').addEventListener('click', function() {
+            // Initialize Socket.IO connection
+            socket = io();
+            
+            socket.on('connect', function() {
+                document.getElementById('connection-status').textContent = 'Connected';
+                document.getElementById('connection-status').style.color = 'green';
+                document.getElementById('connect-btn').disabled = true;
+                document.getElementById('disconnect-btn').disabled = false;
+                
+                // Join room for current user
+                const userId = "{{ session.get('user_id', '') }}";
+                if (userId) {
+                    socket.emit('join', { user_id: userId });
+                    console.log(`Joining room for user ${userId}`);
+                }
+            });
+            
+            socket.on('disconnect', function() {
+                document.getElementById('connection-status').textContent = 'Disconnected';
+                document.getElementById('connection-status').style.color = 'red';
+                document.getElementById('connect-btn').disabled = false;
+                document.getElementById('disconnect-btn').disabled = true;
+            });
+            
+            socket.on('error', function(error) {
+                console.error('Socket.IO error:', error);
+                document.getElementById('connection-status').textContent = 'Error: ' + error;
+                document.getElementById('connection-status').style.color = 'red';
+            });
+            
+            socket.on('joined', function(data) {
+                addMessage(`Joined room: ${data.room}`);
+            });
+            
+            socket.on('test_message', function(data) {
+                addMessage(`Test message received: ${data.message} (${data.timestamp})`);
+            });
+            
+            socket.on('new_message', function(data) {
+                addMessage(`New message: ${JSON.stringify(data)}`);
+            });
+        });
+        
+        document.getElementById('disconnect-btn').addEventListener('click', function() {
+            if (socket) {
+                socket.disconnect();
+            }
+        });
+        
+        document.getElementById('send-btn').addEventListener('click', function() {
+            const room = document.getElementById('room').value;
+            const message = document.getElementById('message').value;
+            
+            if (!room) {
+                alert('Please enter a room name');
+                return;
+            }
+            
+            fetch('/api/debug/emit-test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    room: room,
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    addMessage(`Message sent to room ${room}: ${message}`);
+                } else {
+                    addMessage(`Error: ${data.error}`);
+                }
+            })
+            .catch(error => {
+                addMessage(`Error: ${error.message}`);
+            });
+        });
+        
+        function addMessage(message) {
+            const messagesDiv = document.getElementById('messages');
+            
+            // Remove the "No messages" text if it's the first message
+            if (messagesDiv.querySelector('.text-muted')) {
+                messagesDiv.innerHTML = '';
+            }
+            
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message';
+            messageElement.innerHTML = `
+                <p>${message}</p>
+                <small>${new Date().toLocaleTimeString()}</small>
+            `;
+            
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        // Auto-connect on page load
+        window.onload = function() {
+            document.getElementById('connect-btn').click();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Skills - SkillSwap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/browse-skills.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    {% include 'partials/header.html' %}
+    
+    <main>
+        <section class="browse-skills">
+            <div class="container">
+                <div class="page-header">
+                    <h1>Browse Skills</h1>
+                    <p>Discover skills you can learn from our community members.</p>
+                </div>
+                
+                <div class="filter-container">
+                    <div class="search-box">
+                        <input type="text" id="skill-search" placeholder="Search skills...">
+                        <button id="search-btn"><i class="fas fa-search"></i></button>
+                    </div>
+                    
+                    <div class="filter-options">
+                        <select id="category-filter">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                                <option value="{{ category.CategoryID }}">{{ category.CategoryName }}</option>
+                            {% endfor %}
+                        </select>
+                        
+                        <select id="difficulty-filter">
+                            <option value="">All Difficulties</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="skills-grid" id="skills-container">
+                    {% for skill in skills %}
+                        <div class="skill-card" 
+                             data-category="{{ skill.CategoryID }}" 
+                             data-difficulty="{{ skill.Difficulty }}">
+                            <div class="skill-header">
+                                <h3>{{ skill.SkillName }}</h3>
+                                <span class="badge badge-{{ skill.Difficulty.lower() }}">{{ skill.Difficulty }}</span>
+                            </div>
+                            <div class="skill-details">
+                                <p>Category: {{ skill.CategoryName }}</p>
+                                {% if skill.Description %}
+                                    <p class="skill-description">{{ skill.Description[:100] }}{% if skill.Description|length > 100 %}...{% endif %}</p>
+                                {% endif %}
+                            </div>
+                            <div class="skill-actions">
+                                <a href="{{ url_for('skill_detail', skill_id=skill.SkillID) }}" class="btn btn-primary btn-sm">View Details</a>
+                                {% if 'user_id' in session %}
+                                    <a href="{{ url_for('add_skill') }}?skill_id={{ skill.SkillID }}" class="btn btn-secondary btn-sm">Add to Profile</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    {% include 'partials/footer.html' %}
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const skillSearch = document.getElementById('skill-search');
+            const categoryFilter = document.getElementById('category-filter');
+            const difficultyFilter = document.getElementById('difficulty-filter');
+            const skillsContainer = document.getElementById('skills-container');
+            const skillCards = document.querySelectorAll('.skill-card');
+            
+            function filterSkills() {
+                const searchTerm = skillSearch.value.toLowerCase();
+                const categoryValue = categoryFilter.value;
+                const difficultyValue = difficultyFilter.value;
+                
+                skillCards.forEach(card => {
+                    const skillName = card.querySelector('h3').textContent.toLowerCase();
+                    const categoryMatch = !categoryValue || card.dataset.category === categoryValue;
+                    const difficultyMatch = !difficultyValue || card.dataset.difficulty === difficultyValue;
+                    const searchMatch = !searchTerm || skillName.includes(searchTerm);
+                    
+                    if (categoryMatch && difficultyMatch && searchMatch) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+            
+            skillSearch.addEventListener('input', filterSkills);
+            categoryFilter.addEventListener('change', filterSkills);
+            difficultyFilter.addEventListener('change', filterSkills);
+            
+            document.getElementById('search-btn').addEventListener('click', filterSkills);
+        });
+    </script>
+</body>
+</html>

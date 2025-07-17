@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Request - SkillSwap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/create_request.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    {% include 'partials/header.html' %}
+    
+    <main>
+        <section class="create-request">
+            <div class="container">
+                <div class="page-header">
+                    <h1>Request Help with a Skill</h1>
+                </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="request-form-container">
+                    <form action="{{ url_for('create_request') }}" method="post" class="request-form">
+                        <div class="form-group">
+                            <label for="skill_id">Select Skill</label>
+                            <select id="skill_id" name="skill_id" required>
+                                <option value="">-- Select a Skill --</option>
+                                {% for skill in skills %}
+                                    <option value="{{ skill.SkillID }}" {% if request.args.get('skill_id')|int == skill.SkillID %}selected{% endif %}>
+                                        {{ skill.SkillName }} ({{ skill.CategoryName }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="proficiency">Desired Proficiency Level</label>
+                            <select id="proficiency" name="proficiency" required>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                                <option value="Expert">Expert</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" rows="5" placeholder="Describe what you want to learn and any specific areas you need help with..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="is_urgent" name="is_urgent">
+                            <label for="is_urgent">Mark as Urgent</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expiry_days">Request Valid for (days)</label>
+                            <select id="expiry_days" name="expiry_days" required>
+                                <option value="7">7 days</option>
+                                <option value="14" selected>14 days</option>
+                                <option value="30">30 days</option>
+                                <option value="60">60 days</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Create Request</button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    {% include 'partials/footer.html' %}
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

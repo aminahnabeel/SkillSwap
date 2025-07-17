@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ skill.SkillName }} - SkillSwap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/skill-detail.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    {% include 'partials/header.html' %}
+    
+    <main>
+        <section class="skill-detail">
+            <div class="container">
+                <div class="page-header">
+                    <a href="{{ url_for('browse_skills') }}" class="back-link">
+                        <i class="fas fa-arrow-left"></i> Back to Skills
+                    </a>
+                    <h1>{{ skill.SkillName }}</h1>
+                    <span class="badge badge-{{ skill.Difficulty|lower }}">{{ skill.Difficulty }}</span>
+                </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="skill-content">
+                    <div class="skill-info">
+                        <div class="info-card">
+                            <h2>About this Skill</h2>
+                            <p><i class="fas fa-folder-open"></i> Category: <strong>{{ skill.CategoryName }}</strong></p>
+                            <p><i class="fas fa-chart-line"></i> Difficulty: <strong>{{ skill.Difficulty }}</strong></p>
+                            {% if skill.Description %}
+                                <div class="skill-description">
+                                    <h3>Description</h3>
+                                    <p>{{ skill.Description }}</p>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="skill-actions">
+                                {% if 'user_id' in session %}
+                                    <a href="{{ url_for('add_skill') }}?skill_id={{ skill.SkillID }}" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i> Add to My Skills
+                                    </a>
+                                    <a href="{{ url_for('create_request') }}?skill_id={{ skill.SkillID }}" class="btn btn-secondary">
+                                        <i class="fas fa-question-circle"></i> Request Help
+                                    </a>
+                                {% else %}
+                                    <a href="{{ url_for('login') }}" class="btn btn-primary">
+                                        <i class="fas fa-sign-in-alt"></i> Login to Add Skill
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-users">
+                        <h2>People with this Skill</h2>
+                        
+                        {% if users %}
+                            <div class="users-list">
+                                {% for user in users %}
+                                    <div class="user-card">
+                                        <div class="user-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="user-info">
+                                            <h3>{{ user.FirstName }} {{ user.LastName }}</h3>
+                                            <p class="username">@{{ user.Username }}</p>
+                                            <p class="proficiency">
+                                                <span class="badge badge-{{ user.ProficiencyLevel|lower }}">{{ user.ProficiencyLevel }}</span>
+                                            </p>
+                                            <p class="reputation">
+                                                <i class="fas fa-star"></i> {{ user.ReputationScore }} Reputation
+                                            </p>
+                                        </div>
+                                        <div class="user-actions">
+                                            <a href="{{ url_for('profile', user_id=user.UserID) }}" class="btn btn-sm">
+                                                <i class="fas fa-user-circle"></i> View Profile
+                                            </a>
+                                            {% if 'user_id' in session and session['user_id'] != user.UserID %}
+                                                <a href="{{ url_for('conversation', other_user_id=user.UserID) }}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-comment"></i> Message
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fas fa-users fa-3x mb-3" style="display: block; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                <p>No users have added this skill to their profile yet.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    {% include 'partials/footer.html' %}
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Add animation to user cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const userCards = document.querySelectorAll('.user-card');
+            userCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                }, 100 * (index + 1));
+            });
+        });
+    </script>
+</body>
+</html>

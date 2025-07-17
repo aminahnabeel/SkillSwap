@@ -1,0 +1,20 @@
+/* Main CSS file that imports all other CSS files */
+
+/* Base styles */
+@import "base/variables.css";
+@import "base/reset.css";
+@import "base/typography.css";
+@import "base/buttons.css";
+@import "base/forms.css";
+@import "base/components.css";
+@import "base/utilities.css";
+
+/* Layout styles */
+@import "layout/header.css";
+@import "layout/footer.css";
+@import "layout/responsive.css";
+
+/* Common page elements */
+@import "pages/common.css";
+
+/* Individual page styles will be imported in their respective HTML files */
