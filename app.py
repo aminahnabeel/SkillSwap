@@ -9,22 +9,51 @@ import json
 from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = secrets.token_hex(16)
-socketio = SocketIO(app)
+# Use environment variable for secret key in production, generate one for development
+app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(16))
 
-# Database connection
+# Initialize SocketIO with appropriate settings for PythonAnywhere
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+# Database connection - supports both local SQL Server and MySQL for PythonAnywhere
 def get_db_connection():
-    try:
-        conn = pyodbc.connect(
-           'DRIVER={ODBC Driver 17 for SQL Server};'
-            'SERVER=localhost\SQLEXPRESS02;'  # Replace with your server
-            'DATABASE=skillswaps;'  # Replace with your database name
-            'Trusted_Connection=yes;'
-        )
-        return conn
-    except Exception as e:
-        print(f"Database connection error: {str(e)}")
-        return None
+    # Check if we're on PythonAnywhere or using MySQL
+    mysql_host = os.environ.get('MYSQL_HOST')
+    mysql_user = os.environ.get('MYSQL_USER')
+    mysql_password = os.environ.get('MYSQL_PASSWORD')
+    mysql_database = os.environ.get('MYSQL_DATABASE')
+    
+    if mysql_host and mysql_user and mysql_password and mysql_database:
+        # PythonAnywhere MySQL connection
+        try:
+            import mysql.connector
+            conn = mysql.connector.connect(
+                host=mysql_host,
+                user=mysql_user,
+                password=mysql_password,
+                database=mysql_database
+            )
+            return conn
+        except ImportError:
+            print("MySQL connector not available. Install with: pip install mysql-connector-python")
+            return None
+        except Exception as e:
+            print(f"MySQL connection error: {str(e)}")
+            return None
+    else:
+        # Local SQL Server connection (development)
+        try:
+            conn = pyodbc.connect(
+               'DRIVER={ODBC Driver 17 for SQL Server};'
+                'SERVER=localhost\\SQLEXPRESS02;'  # Replace with your server
+                'DATABASE=skillswaps;'  # Replace with your database name
+                'Trusted_Connection=yes;'
+            )
+            return conn
+        except Exception as e:
+            print(f"Database connection error: {str(e)}")
+            return None
+
 
 # Add a function to check database connection
 def test_db_connection():
@@ -1723,5 +1752,13 @@ if __name__ == '__main__':
     if not test_db_connection():
         print("WARNING: Database connection failed on startup!")
     
+    # Get port from environment variable (PythonAnywhere compatibility)
     port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, host='0.0.0.0', port=port, debug=False)
+    
+    # Check if we're running on PythonAnywhere
+    if os.environ.get('PYTHONANYWHERE_SITE'):
+        # Running on PythonAnywhere - use basic Flask app without SocketIO
+        app.run(host='0.0.0.0', port=port, debug=False)
+    else:
+        # Running locally - use SocketIO
+        socketio.run(app, host='0.0.0.0', port=port, debug=False)
